@@ -59,16 +59,22 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2>Crear Cuenta</h2>
-        <p className="auth-subtitle">Regístrate en MateCode</p>
+    <div className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-slate-800 border border-slate-700 rounded-xl p-8 shadow-xl">
+        <h2 className="text-2xl font-bold text-center mb-1">Crear Cuenta</h2>
+        <p className="text-sm text-slate-400 text-center mb-6">Regístrate en MateCode</p>
 
-        {error && <div className="error-banner">{error}</div>}
+        {error && (
+          <div className="mb-4 p-3 bg-red-950/50 border border-red-500/50 rounded-lg text-red-200 text-sm">
+            {error}
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="email">Correo electrónico</label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-xs font-medium text-slate-300 mb-1">
+              Correo electrónico
+            </label>
             <input
               id="email"
               type="email"
@@ -77,11 +83,14 @@ export function RegisterPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
+              className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Contraseña</label>
+          <div>
+            <label htmlFor="password" className="block text-xs font-medium text-slate-300 mb-1">
+              Contraseña
+            </label>
             <input
               id="password"
               type="password"
@@ -90,11 +99,14 @@ export function RegisterPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="new-password"
+              className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirmar contraseña</label>
+          <div>
+            <label htmlFor="confirmPassword" className="block text-xs font-medium text-slate-300 mb-1">
+              Confirmar contraseña
+            </label>
             <input
               id="confirmPassword"
               type="password"
@@ -103,29 +115,40 @@ export function RegisterPage() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               autoComplete="new-password"
+              className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          <button type="submit" className="btn btn-primary" disabled={submitting}>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-500 rounded-lg font-medium text-white transition disabled:opacity-50 cursor-pointer"
+          >
             {submitting ? 'Creando cuenta...' : 'Registrarse'}
           </button>
         </form>
 
-        <div className="auth-divider">
-          <span>o</span>
+        <div className="relative my-6 text-center">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-700" />
+          </div>
+          <span className="relative px-3 bg-slate-800 text-xs text-slate-400 uppercase">o</span>
         </div>
 
         <button
           type="button"
           onClick={handleGoogle}
-          className="btn btn-secondary"
           disabled={submitting}
+          className="w-full py-2.5 px-4 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-lg font-medium text-slate-200 transition disabled:opacity-50 cursor-pointer"
         >
           Continuar con Google
         </button>
 
-        <p className="auth-footer">
-          ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
+        <p className="mt-6 text-center text-xs text-slate-400">
+          ¿Ya tienes cuenta?{' '}
+          <Link to="/login" className="text-blue-400 hover:underline">
+            Inicia sesión
+          </Link>
         </p>
       </div>
     </div>
