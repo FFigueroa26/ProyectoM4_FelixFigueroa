@@ -1,0 +1,16 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Reglas de seguridad para la colección de tareas
+    match /tasks/{taskId} {
+      
+      // Solo un usuario autenticado puede crear una tarea asignada a su propio UID
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+
+      // Solo el creador de la tarea puede leerla, modificarla o eliminarla
+      allow read, update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+    }
+  }
+}
