@@ -2,14 +2,14 @@ import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-export default async function handler(request: Request): Promise<Response> {
-  if (request.method !== 'POST') {
-    return Response.json({ ok: false, error: 'Método no permitido.' }, { status: 405 })
-  }
+export function GET(): Response {
+  return Response.json({ ok: false, error: 'Método no permitido.' }, { status: 405 })
+}
 
+export async function POST(request: Request): Promise<Response> {
   let body: Record<string, unknown>
   try {
-    body = await request.json()
+    body = (await request.json()) as Record<string, unknown>
   } catch {
     return Response.json({ ok: false, error: 'Cuerpo de solicitud inválido.' }, { status: 400 })
   }
