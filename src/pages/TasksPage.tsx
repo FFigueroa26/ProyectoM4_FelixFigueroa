@@ -4,6 +4,7 @@ import { useTasks } from '../hooks/useTasks'
 import { TodoForm } from '../components/tasks/TodoForm'
 import { TodoList } from '../components/tasks/TodoList'
 import { TaskFilters, type FilterType } from '../components/tasks/TaskFilters'
+import { SendTaskSummaryButton } from '../components/tasks/SendTaskSummaryButton'
 import type { Task, TaskInput } from '../types/task'
 
 export function TasksPage() {
@@ -60,6 +61,11 @@ export function TasksPage() {
             Cerrar sesión
           </button>
         </header>
+
+        {/* Envío del resumen de tareas vía AWS SES (función serverless) */}
+        <div className="mb-6">
+          <SendTaskSummaryButton tasks={tasks} />
+        </div>
 
         {/* Formulario para agregar / editar tarea */}
         <TodoForm
