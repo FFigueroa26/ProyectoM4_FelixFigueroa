@@ -23,8 +23,18 @@ export function getAuthErrorMessage(code: string): string {
       return 'La contraseña debe tener al menos 6 caracteres.'
     case 'auth/popup-closed-by-user':
       return 'Inicio de sesión con Google cancelado.'
+    case 'auth/cancelled-popup-request':
+      return 'La solicitud de inicio de sesión con Google fue cancelada.'
+    case 'auth/popup-blocked':
+      return 'El navegador bloqueó la ventana emergente. Permitela para iniciar sesión con Google.'
+    case 'auth/unauthorized-domain':
+      return 'Este dominio no está autorizado para iniciar sesión con Google. Agrégalo en Firebase (Authentication > Authorized domains).'
+    case 'auth/operation-not-allowed':
+      return 'El inicio de sesión con Google no está habilitado. Actívalo en Firebase (Authentication > Sign-in method).'
+    case 'auth/network-request-failed':
+      return 'Hubo un problema de conexión. Inténtalo de nuevo.'
     default:
-      return 'Ocurrió un error inesperado al autenticar.'
+      return `Ocurrió un error inesperado al autenticar. (${code})`
   }
 }
 
