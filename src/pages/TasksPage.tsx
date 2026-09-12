@@ -7,6 +7,7 @@ import { TodoList } from '../components/tasks/TodoList'
 import { SendTaskSummaryButton } from '../components/tasks/SendTaskSummaryButton'
 import { TaskProgressSummary } from '../components/tasks/TaskProgressSummary'
 import { TaskModal } from '../components/tasks/TaskModal'
+import { TaskFilters, type FilterType } from '../components/tasks/TaskFilters'
 import type { Task, TaskInput } from '../types/task'
 
 export function TasksPage() {
@@ -16,9 +17,12 @@ export function TasksPage() {
   const [isAdding, setIsAdding] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
+  const [currentFilter, setCurrentFilter] = useState<FilterType>('all')
 
   const pendingTasks = tasks.filter((t) => !t.completed)
   const completedTasks = tasks.filter((t) => t.completed)
+  const showPending = currentFilter !== 'completed'
+  const showCompleted = currentFilter !== 'pending'
 
   const handleCreateTask = async (input: TaskInput) => {
     await addTask(input)
@@ -93,8 +97,10 @@ export function TasksPage() {
           </div>
         )}
 
+        <TaskFilters value={currentFilter} onChange={setCurrentFilter} />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
-          <div className="bg-[#1c1338]/70 border border-[#3b2769] rounded-2xl p-4 shadow-xl backdrop-blur-md">
+          {showPending && <div className="bg-[#1c1338]/70 border border-[#3b2769] rounded-2xl p-4 shadow-xl backdrop-blur-md">
             <div className="flex items-center justify-between mb-3.5 pb-2 border-b border-[#362459]">
               <div className="flex items-center gap-2">
                 <Clock size={16} className="text-violet-400" />
@@ -133,9 +139,9 @@ export function TasksPage() {
               onSelect={(task) => setSelectedTask(task)}
               emptyMessage="No tienes tareas pendientes."
             />
-          </div>
+          </div>}
 
-          <div className="bg-[#1c1338]/70 border border-[#3b2769] rounded-2xl p-4 shadow-xl backdrop-blur-md">
+          {showCompleted && <div className="bg-[#1c1338]/70 border border-[#3b2769] rounded-2xl p-4 shadow-xl backdrop-blur-md">
             <div className="flex items-center justify-between mb-3.5 pb-2 border-b border-[#362459]">
               <div className="flex items-center gap-2">
                 <CheckCircle2 size={16} className="text-emerald-400" />
@@ -156,7 +162,7 @@ export function TasksPage() {
               onSelect={(task) => setSelectedTask(task)}
               emptyMessage="Aún no has completado tareas."
             />
-          </div>
+          </div>}
         </div>
 
         {selectedTask && (
