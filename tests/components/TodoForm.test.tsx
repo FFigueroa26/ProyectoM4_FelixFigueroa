@@ -21,6 +21,8 @@ describe('TodoForm - Pruebas de componente', () => {
     expect(mockOnSubmit).toHaveBeenCalledWith({
       title: 'Comprar café',
       description: 'Grano entero tostado medio',
+      dueDate: '',
+      priority: 'medium',
     })
   })
 

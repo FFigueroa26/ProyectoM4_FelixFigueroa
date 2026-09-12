@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { PlusCircle, Edit3, X, AlertCircle } from 'lucide-react'
+import { PlusCircle, Edit3, X, AlertCircle, CalendarDays, Flag } from 'lucide-react'
 import type { TaskInput } from '../../types/task'
 
 interface TodoFormProps {
@@ -17,6 +17,8 @@ export function TodoForm({
 }: TodoFormProps) {
   const [title, setTitle] = useState(initialData?.title || '')
   const [description, setDescription] = useState(initialData?.description || '')
+  const [dueDate, setDueDate] = useState(initialData?.dueDate || '')
+  const [priority, setPriority] = useState(initialData?.priority || 'medium')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -30,10 +32,12 @@ export function TodoForm({
     setError(null)
     setSubmitting(true)
     try {
-      await onSubmit({ title, description })
+      await onSubmit({ title, description, dueDate, priority })
       if (!isEditing) {
         setTitle('')
         setDescription('')
+        setDueDate('')
+        setPriority('medium')
       }
     } catch {
       setError('Hubo un error al guardar la tarea.')
@@ -76,6 +80,38 @@ export function TodoForm({
             onChange={(e) => setTitle(e.target.value)}
             className="w-full px-3 py-2 bg-[#1b182b] border border-[#393456] rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400/30 transition"
           />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label htmlFor="task-due-date" className="flex items-center gap-1 text-xs font-medium text-slate-300 mb-1">
+              <CalendarDays size={12} /> Fecha de vencimiento
+            </label>
+            <input
+              id="task-due-date"
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              style={{ colorScheme: 'dark' }}
+              className="w-full px-3 py-2 bg-[#1b182b] border border-[#393456] rounded-xl text-white text-sm focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400/30 transition"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="task-priority" className="flex items-center gap-1 text-xs font-medium text-slate-300 mb-1">
+              <Flag size={12} /> Prioridad
+            </label>
+            <select
+              id="task-priority"
+              value={priority}
+              onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high')}
+              className="w-full px-3 py-2 bg-[#1b182b] border border-[#393456] rounded-xl text-white text-sm focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400/30 transition"
+            >
+              <option value="high">Alta</option>
+              <option value="medium">Media</option>
+              <option value="low">Baja</option>
+            </select>
+          </div>
         </div>
 
         <div>

@@ -5,9 +5,15 @@ export interface Task {
   completed: boolean
   userId: string
   createdAt?: number
+  dueDate?: string
+  priority?: TaskPriority
 }
 
 export type TaskInput = {
   title: string
   description: string
+  dueDate?: string
+  priority?: TaskPriority
 }
+
+export type TaskPriority = 'low' | 'medium' | 'high'

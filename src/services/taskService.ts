@@ -35,6 +35,8 @@ export function subscribeToUserTasks(
           completed: Boolean(data.completed),
           userId: data.userId,
           createdAt: data.createdAt || 0,
+          dueDate: data.dueDate || '',
+          priority: data.priority || 'medium',
         }
       })
 
@@ -56,6 +58,8 @@ export async function createTask(input: TaskInput, userId: string): Promise<stri
     completed: false,
     userId,
     createdAt: Date.now(),
+    dueDate: input.dueDate || '',
+    priority: input.priority || 'medium',
   })
   return docRef.id
 }
@@ -65,6 +69,8 @@ export async function updateTask(taskId: string, input: TaskInput): Promise<void
   await updateDoc(taskRef, {
     title: input.title.trim(),
     description: input.description.trim(),
+    dueDate: input.dueDate || '',
+    priority: input.priority || 'medium',
   })
 }
 

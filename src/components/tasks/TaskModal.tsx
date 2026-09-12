@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, CheckCircle2, Circle, AlignLeft, Trash2, Edit3, Check } from 'lucide-react'
+import { X, CheckCircle2, Circle, AlignLeft, Trash2, Edit3, Check, CalendarDays, Flag } from 'lucide-react'
 import type { Task, TaskInput } from '../../types/task'
 
 interface TaskModalProps {
@@ -19,12 +19,12 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
 
   const handleSaveTitle = async () => {
     if (!title.trim()) return
-    await onEdit(task.id, { title: title.trim(), description })
+    await onEdit(task.id, { title: title.trim(), description, dueDate: task.dueDate, priority: task.priority })
     setIsEditingTitle(false)
   }
 
   const handleSaveDesc = async () => {
-    await onEdit(task.id, { title, description: description.trim() })
+    await onEdit(task.id, { title, description: description.trim(), dueDate: task.dueDate, priority: task.priority })
     setIsEditingDesc(false)
   }
 
@@ -53,7 +53,12 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
           <button
             type="button"
             onClick={() => onToggle(task.id, !task.completed)}
-            className="mt-1 text-slate-400 hover:text-emerald-400 transition cursor-pointer shrink-0"
+            aria-label={task.completed ? 'Marcar como pendiente' : 'Marcar como completada'}
+            className={`mt-1 rounded-full transition cursor-pointer shrink-0 ${
+              task.completed
+                ? 'text-white bg-emerald-500 shadow-md shadow-emerald-500/30 scale-105'
+                : 'text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10'
+            }`}
             title={task.completed ? 'Marcar como pendiente' : 'Marcar como completada'}
           >
             {task.completed ? (
@@ -107,6 +112,17 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
                 {task.completed ? 'Completadas' : 'Pendientes'}
               </span>
             </p>
+
+            <div className="flex items-center gap-2 flex-wrap mt-3 text-xs">
+              <span className="inline-flex items-center gap-1 text-amber-300">
+                <Flag size={13} /> Prioridad: {task.priority === 'high' ? 'Alta' : task.priority === 'low' ? 'Baja' : 'Media'}
+              </span>
+              {task.dueDate && (
+                <span className="inline-flex items-center gap-1 text-slate-400">
+                  <CalendarDays size={13} /> Vence: {task.dueDate}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 

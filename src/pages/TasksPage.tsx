@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CheckSquare, LogOut, Plus, Clock, CheckCircle2 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useTasks } from '../hooks/useTasks'
@@ -10,6 +10,19 @@ import { TaskModal } from '../components/tasks/TaskModal'
 import { TaskFilters, type FilterType } from '../components/tasks/TaskFilters'
 import type { Task, TaskInput } from '../types/task'
 
+const priorityRank = { high: 0, medium: 1, low: 2 } as const
+
+function sortTasks(tasks: Task[]) {
+  return [...tasks].sort((a, b) => {
+    if (a.dueDate && b.dueDate && a.dueDate !== b.dueDate) return a.dueDate.localeCompare(b.dueDate)
+    if (a.dueDate && !b.dueDate) return -1
+    if (!a.dueDate && b.dueDate) return 1
+    const priorityDifference = (priorityRank[a.priority || 'medium'] ?? 1) - (priorityRank[b.priority || 'medium'] ?? 1)
+    if (priorityDifference !== 0) return priorityDifference
+    return (b.createdAt || 0) - (a.createdAt || 0)
+  })
+}
+
 export function TasksPage() {
   const { user, logout } = useAuth()
   const { tasks, loading, error, addTask, editTask, toggleTask, removeTask } = useTasks()
@@ -18,11 +31,26 @@ export function TasksPage() {
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [currentFilter, setCurrentFilter] = useState<FilterType>('all')
+  const editFormRef = useRef<HTMLDivElement>(null)
 
-  const pendingTasks = tasks.filter((t) => !t.completed)
-  const completedTasks = tasks.filter((t) => t.completed)
+  const filteredTasks = currentFilter === 'pending'
+    ? tasks.filter((task) => !task.completed)
+    : currentFilter === 'completed'
+      ? tasks.filter((task) => task.completed)
+      : currentFilter === 'all'
+        ? tasks
+        : tasks.filter((task) => (task.priority || 'medium') === currentFilter)
+  const pendingTasks = sortTasks(filteredTasks.filter((t) => !t.completed))
+  const completedTasks = sortTasks(filteredTasks.filter((t) => t.completed))
   const showPending = currentFilter !== 'completed'
   const showCompleted = currentFilter !== 'pending'
+  const showsBothStatuses = currentFilter === 'all' || ['high', 'medium', 'low'].includes(currentFilter)
+
+  useEffect(() => {
+    if (editingTask) {
+      editFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [editingTask])
 
   const handleCreateTask = async (input: TaskInput) => {
     await addTask(input)
@@ -37,6 +65,20 @@ export function TasksPage() {
     }
   }
 
+  const handleToggleTask = async (id: string, completed: boolean) => {
+    const previousTask = selectedTask
+    if (selectedTask?.id === id) {
+      setSelectedTask({ ...selectedTask, completed })
+    }
+
+    try {
+      await toggleTask(id, completed)
+    } catch (error) {
+      if (previousTask?.id === id) setSelectedTask(previousTask)
+      throw error
+    }
+  }
+
   const userInitial = user?.email ? user.email.charAt(0).toUpperCase() : 'U'
 
   return (
@@ -44,12 +86,12 @@ export function TasksPage() {
       <header className="sticky top-0 z-30 bg-[#140d26]/70 border-b border-[#362459] backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-violet-600 flex items-center justify-center shadow-md shadow-violet-600/30">
-              <CheckSquare className="w-4.5 h-4.5 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-violet-600 flex items-center justify-center shadow-md shadow-violet-600/30">
+              <CheckSquare className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-white text-base tracking-tight flex items-center gap-2">
+            <span className="font-bold text-white text-xl tracking-tight flex items-center gap-2">
               MateCode
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
                 Tablero
               </span>
             </span>
@@ -77,20 +119,25 @@ export function TasksPage() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] gap-4 mb-6 items-stretch">
+        <div className="mb-6">
           <TaskProgressSummary
             completedTasks={completedTasks.length}
             pendingTasks={pendingTasks.length}
+            emailAction={<SendTaskSummaryButton tasks={tasks} />}
           />
-          <SendTaskSummaryButton tasks={tasks} />
         </div>
 
         {editingTask && (
-          <div className="mb-6">
+          <div ref={editFormRef} className="mb-6 scroll-mt-20">
             <TodoForm
               key={editingTask.id}
               onSubmit={(input) => handleEditTask(editingTask.id, input)}
-              initialData={{ title: editingTask.title, description: editingTask.description }}
+              initialData={{
+                title: editingTask.title,
+                description: editingTask.description,
+                dueDate: editingTask.dueDate,
+                priority: editingTask.priority,
+              }}
               isEditing={true}
               onCancel={() => setEditingTask(null)}
             />
@@ -99,8 +146,12 @@ export function TasksPage() {
 
         <TaskFilters value={currentFilter} onChange={setCurrentFilter} />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
-          {showPending && <div className="bg-[#1c1338]/70 border border-[#3b2769] rounded-2xl p-4 shadow-xl backdrop-blur-md">
+        <div
+          className={`grid grid-cols-1 gap-5 items-start ${
+            showsBothStatuses ? 'md:grid-cols-2' : ''
+          }`}
+        >
+          {showPending && <div className="h-full bg-[#1c1338]/70 border border-[#3b2769] rounded-2xl p-4 shadow-xl backdrop-blur-md">
             <div className="flex items-center justify-between mb-3.5 pb-2 border-b border-[#362459]">
               <div className="flex items-center gap-2">
                 <Clock size={16} className="text-violet-400" />
@@ -133,7 +184,7 @@ export function TasksPage() {
               tasks={pendingTasks}
               loading={loading}
               error={error}
-              onToggle={toggleTask}
+              onToggle={handleToggleTask}
               onEdit={(task) => setEditingTask(task)}
               onDelete={removeTask}
               onSelect={(task) => setSelectedTask(task)}
@@ -141,7 +192,7 @@ export function TasksPage() {
             />
           </div>}
 
-          {showCompleted && <div className="bg-[#1c1338]/70 border border-[#3b2769] rounded-2xl p-4 shadow-xl backdrop-blur-md">
+          {showCompleted && <div className="h-full bg-[#1c1338]/70 border border-[#3b2769] rounded-2xl p-4 shadow-xl backdrop-blur-md">
             <div className="flex items-center justify-between mb-3.5 pb-2 border-b border-[#362459]">
               <div className="flex items-center gap-2">
                 <CheckCircle2 size={16} className="text-emerald-400" />
@@ -156,7 +207,7 @@ export function TasksPage() {
               tasks={completedTasks}
               loading={loading}
               error={error}
-              onToggle={toggleTask}
+              onToggle={handleToggleTask}
               onEdit={(task) => setEditingTask(task)}
               onDelete={removeTask}
               onSelect={(task) => setSelectedTask(task)}
@@ -169,7 +220,7 @@ export function TasksPage() {
           <TaskModal
             task={selectedTask}
             onClose={() => setSelectedTask(null)}
-            onToggle={toggleTask}
+            onToggle={handleToggleTask}
             onEdit={handleEditTask}
             onDelete={removeTask}
           />

@@ -25,7 +25,7 @@ export function SendTaskSummaryButton({ tasks }: SendTaskSummaryButtonProps) {
     const completed = tasks.filter((t) => t.completed)
 
     const taskLines = tasks
-      .map((t) => `- [${t.completed ? 'x' : ' '}] ${t.title}: ${t.description}`)
+      .map((t) => `- [${t.completed ? 'x' : ' '}] ${t.title} (${t.priority || 'medium'}${t.dueDate ? `, vence ${t.dueDate}` : ''}): ${t.description}`)
       .join('\n')
 
     const text = [
@@ -54,25 +54,23 @@ export function SendTaskSummaryButton({ tasks }: SendTaskSummaryButtonProps) {
   }
 
   return (
-    <div className="bg-[#231f38] border border-[#393456] rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-xl bg-violet-500/15 text-violet-300 border border-violet-500/20 shrink-0">
-          <Mail size={17} />
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center gap-2 min-w-0">
+        <div className="p-1.5 rounded-lg bg-violet-500/15 text-violet-300 border border-violet-500/20 shrink-0">
+          <Mail size={15} />
         </div>
-        <div>
-          <h4 className="text-xs sm:text-sm font-semibold text-white">Resumen por Correo</h4>
-          <p className="text-[11px] text-slate-400">
-            Recibe un resumen actualizado de tus tareas en tu correo.
-          </p>
+        <div className="min-w-0">
+          <h4 className="text-sm font-semibold text-white truncate">Resumen por correo</h4>
+          <p className="text-[11px] text-slate-400 truncate">Resumen actualizado de tus tareas</p>
         </div>
       </div>
 
-      <div className="flex flex-col sm:items-end gap-1.5">
+      <div className="flex items-center gap-2 shrink-0">
         <button
           type="button"
           onClick={handleSend}
           disabled={status === 'sending'}
-          className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 bg-violet-600 hover:bg-violet-500 disabled:bg-violet-900/60 disabled:cursor-not-allowed text-white rounded-xl text-xs font-semibold shadow-sm transition cursor-pointer"
+          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-violet-600 hover:bg-violet-500 disabled:bg-violet-900/60 disabled:cursor-not-allowed text-white rounded-lg text-[11px] font-semibold whitespace-nowrap shadow-sm transition cursor-pointer"
         >
           {status === 'sending' ? (
             <>
@@ -88,14 +86,14 @@ export function SendTaskSummaryButton({ tasks }: SendTaskSummaryButtonProps) {
         </button>
 
         {status === 'success' && (
-          <p className="flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
+          <p className="hidden sm:flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium">
             <CheckCircle2 size={13} className="shrink-0" />
             <span>{message}</span>
           </p>
         )}
 
         {status === 'error' && (
-          <p className="flex items-start gap-1.5 text-xs text-red-400 font-medium">
+          <p className="hidden sm:flex items-start gap-1.5 text-[11px] text-red-400 font-medium">
             <AlertCircle size={13} className="shrink-0 mt-0.5" />
             <span>{message}</span>
           </p>
