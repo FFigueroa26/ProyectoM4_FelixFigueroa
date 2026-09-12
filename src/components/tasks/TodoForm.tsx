@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { PlusCircle, Edit3, X, AlertCircle } from 'lucide-react'
 import type { TaskInput } from '../../types/task'
 
 interface TodoFormProps {
@@ -42,14 +43,23 @@ export function TodoForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-slate-800 border border-slate-700 rounded-xl p-5 mb-6 shadow-sm">
-      <h3 className="text-base font-semibold text-white mb-3">
-        {isEditing ? 'Editar Tarea' : 'Nueva Tarea'}
-      </h3>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-[#242038] border border-[#393456] rounded-2xl p-4 shadow-lg"
+    >
+      <div className="flex items-center gap-2 mb-3">
+        <div className={`p-1.5 rounded-lg ${isEditing ? 'bg-amber-500/20 text-amber-300' : 'bg-violet-500/20 text-violet-300'}`}>
+          {isEditing ? <Edit3 size={15} /> : <PlusCircle size={15} />}
+        </div>
+        <h3 className="text-sm font-semibold text-white">
+          {isEditing ? 'Editar Tarea' : 'Nueva Tarea'}
+        </h3>
+      </div>
 
       {error && (
-        <div className="mb-3 p-2.5 bg-red-950/50 border border-red-500/50 rounded-lg text-red-200 text-xs">
-          {error}
+        <div className="mb-3 p-2.5 bg-red-950/40 border border-red-500/30 rounded-xl text-red-200 text-xs flex items-center gap-2">
+          <AlertCircle size={14} className="shrink-0 text-red-400" />
+          <span>{error}</span>
         </div>
       )}
 
@@ -61,10 +71,10 @@ export function TodoForm({
           <input
             id="task-title"
             type="text"
-            placeholder="¿Qué necesitas hacer hoy?"
+            placeholder="¿Qué necesitas hacer?"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 bg-[#1b182b] border border-[#393456] rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400/30 transition"
           />
         </div>
 
@@ -75,10 +85,10 @@ export function TodoForm({
           <textarea
             id="task-description"
             rows={2}
-            placeholder="Detalles adicionales..."
+            placeholder="Añadir una descripción más detallada..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            className="w-full px-3 py-2 bg-[#1b182b] border border-[#393456] rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400/30 resize-none transition"
           />
         </div>
 
@@ -86,18 +96,31 @@ export function TodoForm({
           <button
             type="submit"
             disabled={submitting}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium text-white transition disabled:opacity-50 cursor-pointer"
+            className="px-3.5 py-1.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-xs font-semibold shadow-sm transition disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
           >
-            {submitting ? 'Guardando...' : isEditing ? 'Guardar Cambios' : 'Agregar Tarea'}
+            {submitting ? (
+              'Guardando...'
+            ) : isEditing ? (
+              <>
+                <Edit3 size={13} />
+                <span>Guardar Cambios</span>
+              </>
+            ) : (
+              <>
+                <PlusCircle size={13} />
+                <span>Agregar Tarea</span>
+              </>
+            )}
           </button>
 
-          {isEditing && onCancel && (
+          {onCancel && (
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm font-medium text-slate-200 transition cursor-pointer"
+              className="px-3 py-1.5 bg-[#1b182b] hover:bg-[#2e2947] border border-[#393456] text-slate-300 hover:text-white rounded-xl text-xs font-medium transition cursor-pointer flex items-center gap-1"
             >
-              Cancelar
+              <X size={13} />
+              <span>Cancelar</span>
             </button>
           )}
         </div>
