@@ -5,7 +5,6 @@ import { TodoForm } from '../../src/components/tasks/TodoForm'
 
 describe('TodoForm - Pruebas de componente', () => {
   it('debe permitir escribir datos y llamar a onSubmit con los valores ingresados', async () => {
-    // 1. Arrange (Preparar entorno y mocks)
     const user = userEvent.setup()
     const mockOnSubmit = vi.fn().mockResolvedValue(undefined)
     render(<TodoForm onSubmit={mockOnSubmit} />)
@@ -14,12 +13,10 @@ describe('TodoForm - Pruebas de componente', () => {
     const descInput = screen.getByLabelText(/Descripción/i)
     const submitButton = screen.getByRole('button', { name: /Agregar Tarea/i })
 
-    // 2. Act (Simular interacción del usuario)
     await user.type(titleInput, 'Comprar café')
     await user.type(descInput, 'Grano entero tostado medio')
     await user.click(submitButton)
 
-    // 3. Assert (Verificar resultado esperado)
     expect(mockOnSubmit).toHaveBeenCalledTimes(1)
     expect(mockOnSubmit).toHaveBeenCalledWith({
       title: 'Comprar café',
@@ -28,17 +25,14 @@ describe('TodoForm - Pruebas de componente', () => {
   })
 
   it('caso borde: no debe llamar a onSubmit si el título está vacío y debe mostrar error', async () => {
-    // 1. Arrange
     const user = userEvent.setup()
     const mockOnSubmit = vi.fn()
     render(<TodoForm onSubmit={mockOnSubmit} />)
 
     const submitButton = screen.getByRole('button', { name: /Agregar Tarea/i })
 
-    // 2. Act (Hacer clic sin ingresar título)
     await user.click(submitButton)
 
-    // 3. Assert
     expect(mockOnSubmit).not.toHaveBeenCalled()
     expect(
       screen.getByText(/El título de la tarea es obligatorio/i),
@@ -46,7 +40,6 @@ describe('TodoForm - Pruebas de componente', () => {
   })
 
   it('modo edición: debe precargar valores iniciales y llamar a onCancel al pulsar Cancelar', async () => {
-    // 1. Arrange
     const user = userEvent.setup()
     const mockOnSubmit = vi.fn()
     const mockOnCancel = vi.fn()
@@ -61,7 +54,6 @@ describe('TodoForm - Pruebas de componente', () => {
       />,
     )
 
-    // 2. Act & Assert
     expect(screen.getByDisplayValue('Tarea existente')).toBeInTheDocument()
     expect(screen.getByDisplayValue('Nota previa')).toBeInTheDocument()
 

@@ -6,7 +6,6 @@ export interface SendEmailInput {
   text: string
 }
 
-// Llama a la función serverless, nunca a AWS SES directamente
 export async function sendEmail(input: SendEmailInput): Promise<void> {
   const response = await fetch(SEND_EMAIL_ENDPOINT, {
     method: 'POST',

@@ -5,7 +5,6 @@ import { SendTaskSummaryButton } from '../../src/components/tasks/SendTaskSummar
 import * as emailService from '../../src/services/emailService'
 import * as authHook from '../../src/hooks/useAuth'
 
-// Mock del servicio de correo y del hook de autenticación
 vi.mock('../../src/services/emailService', () => ({
   sendEmail: vi.fn(),
 }))
@@ -33,7 +32,6 @@ describe('SendTaskSummaryButton - Pruebas con servicio simulado', () => {
   })
 
   it('debe enviar el correo y mostrar mensaje de éxito al completar el envío', async () => {
-    // 1. Arrange
     const user = userEvent.setup()
     vi.mocked(emailService.sendEmail).mockResolvedValueOnce(undefined)
 
@@ -41,10 +39,8 @@ describe('SendTaskSummaryButton - Pruebas con servicio simulado', () => {
 
     const sendBtn = screen.getByRole('button', { name: /Enviar resumen de tareas/i })
 
-    // 2. Act
     await user.click(sendBtn)
 
-    // 3. Assert
     expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(emailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -56,7 +52,6 @@ describe('SendTaskSummaryButton - Pruebas con servicio simulado', () => {
   })
 
   it('caso de error: debe mostrar mensaje de error en la UI cuando falla el servicio', async () => {
-    // 1. Arrange
     const user = userEvent.setup()
     vi.mocked(emailService.sendEmail).mockRejectedValueOnce(
       new Error('Servicio de email temporalmente no disponible'),
@@ -66,10 +61,8 @@ describe('SendTaskSummaryButton - Pruebas con servicio simulado', () => {
 
     const sendBtn = screen.getByRole('button', { name: /Enviar resumen de tareas/i })
 
-    // 2. Act
     await user.click(sendBtn)
 
-    // 3. Assert
     expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(
       await screen.findByText(/Servicio de email temporalmente no disponible/i),

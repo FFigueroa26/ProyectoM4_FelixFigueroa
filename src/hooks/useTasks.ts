@@ -30,7 +30,6 @@ export function useTasks() {
       },
     )
 
-    // Limpieza al desmontar para evitar fugas de memoria
     return () => unsubscribe()
   }, [user])
 

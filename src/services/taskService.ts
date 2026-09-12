@@ -13,19 +13,16 @@ import type { Task, TaskInput } from '../types/task'
 
 const TASKS_COLLECTION = 'tasks'
 
-// 1. Suscribirse en tiempo real a las tareas de un usuario específico
 export function subscribeToUserTasks(
   userId: string,
   onUpdate: (tasks: Task[]) => void,
   onError: (error: Error) => void,
 ) {
-  // Consultar solo las tareas que pertenecen al usuario autenticado
   const q = query(
     collection(db, TASKS_COLLECTION),
     where('userId', '==', userId),
   )
 
-  // onSnapshot escucha cambios y devuelve una función de cancelación (unsubscribe)
   return onSnapshot(
     q,
     (snapshot) => {
@@ -41,7 +38,6 @@ export function subscribeToUserTasks(
         }
       })
 
-      // Ordenar en memoria por fecha más reciente
       tasks.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
 
       onUpdate(tasks)
@@ -53,7 +49,6 @@ export function subscribeToUserTasks(
   )
 }
 
-// 2. Crear una nueva tarea
 export async function createTask(input: TaskInput, userId: string): Promise<string> {
   const docRef = await addDoc(collection(db, TASKS_COLLECTION), {
     title: input.title.trim(),
@@ -65,7 +60,6 @@ export async function createTask(input: TaskInput, userId: string): Promise<stri
   return docRef.id
 }
 
-// 3. Modificar título o descripción de una tarea existente
 export async function updateTask(taskId: string, input: TaskInput): Promise<void> {
   const taskRef = doc(db, TASKS_COLLECTION, taskId)
   await updateDoc(taskRef, {
@@ -74,7 +68,6 @@ export async function updateTask(taskId: string, input: TaskInput): Promise<void
   })
 }
 
-// 4. Marcar tarea como completada o pendiente
 export async function toggleTaskStatus(taskId: string, completed: boolean): Promise<void> {
   const taskRef = doc(db, TASKS_COLLECTION, taskId)
   await updateDoc(taskRef, {
@@ -82,7 +75,6 @@ export async function toggleTaskStatus(taskId: string, completed: boolean): Prom
   })
 }
 
-// 5. Eliminar una tarea
 export async function deleteTask(taskId: string): Promise<void> {
   const taskRef = doc(db, TASKS_COLLECTION, taskId)
   await deleteDoc(taskRef)
