@@ -5,6 +5,7 @@ export interface Task {
   completed: boolean
   userId: string
   createdAt?: number
+  order?: number
   dueDate?: string
   priority?: TaskPriority
 }

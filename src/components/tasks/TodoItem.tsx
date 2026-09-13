@@ -1,4 +1,6 @@
 import { Edit3, Trash2, Check, AlignLeft, CalendarDays, Flag } from 'lucide-react'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import type { Task } from '../../types/task'
 
 interface TodoItemProps {
@@ -10,6 +12,14 @@ interface TodoItemProps {
 }
 
 export function TodoItem({ task, onToggle, onEdit, onDelete, onSelect }: TodoItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id })
   const priorityLabel = task.priority === 'high' ? 'Alta' : task.priority === 'low' ? 'Baja' : 'Media'
   const priorityClass = task.priority === 'high'
     ? 'text-red-300 bg-red-500/10 border-red-500/20'
@@ -36,8 +46,14 @@ export function TodoItem({ task, onToggle, onEdit, onDelete, onSelect }: TodoIte
 
   return (
     <div
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+      {...attributes}
+      {...listeners}
       onClick={() => onSelect?.(task)}
-      className={`group border rounded-xl p-3.5 flex items-start justify-between gap-3 transition cursor-pointer ${
+      className={`group border rounded-xl p-3.5 flex items-start justify-between gap-3 transition cursor-grab active:cursor-grabbing ${
+        isDragging ? 'opacity-50 ring-2 ring-violet-400' : ''
+      } ${
         task.completed
           ? 'bg-[#1e1b2e]/60 border-[#2f2b47] opacity-75'
           : 'bg-[#26223b] hover:bg-[#2c2844] border-[#393456] hover:border-[#4c4672] shadow-sm'

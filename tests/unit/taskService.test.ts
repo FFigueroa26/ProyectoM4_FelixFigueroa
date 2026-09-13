@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createTask, updateTask, deleteTask } from '../../src/services/taskService'
+import { createTask, updateTask, updateTaskPlacement, deleteTask } from '../../src/services/taskService'
 import * as firestore from 'firebase/firestore'
 
 vi.mock('firebase/firestore', () => ({
@@ -75,5 +75,16 @@ describe('taskService - Pruebas unitarias con mocks de Firestore', () => {
     await deleteTask(taskId)
 
     expect(firestore.deleteDoc).toHaveBeenCalledTimes(1)
+  })
+
+  it('updateTaskPlacement: debe guardar la posición y el estado al mover una tarea', async () => {
+    vi.mocked(firestore.updateDoc).mockResolvedValueOnce(undefined as never)
+
+    await updateTaskPlacement('task-789', 2, true)
+
+    expect(firestore.updateDoc).toHaveBeenCalledWith(
+      undefined,
+      { order: 2, completed: true },
+    )
   })
 })

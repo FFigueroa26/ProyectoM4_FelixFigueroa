@@ -35,6 +35,7 @@ export function subscribeToUserTasks(
           completed: Boolean(data.completed),
           userId: data.userId,
           createdAt: data.createdAt || 0,
+          order: typeof data.order === 'number' ? data.order : undefined,
           dueDate: data.dueDate || '',
           priority: data.priority || 'medium',
         }
@@ -58,6 +59,7 @@ export async function createTask(input: TaskInput, userId: string): Promise<stri
     completed: false,
     userId,
     createdAt: Date.now(),
+    order: Date.now(),
     dueDate: input.dueDate || '',
     priority: input.priority || 'medium',
   })
@@ -78,6 +80,18 @@ export async function toggleTaskStatus(taskId: string, completed: boolean): Prom
   const taskRef = doc(db, TASKS_COLLECTION, taskId)
   await updateDoc(taskRef, {
     completed,
+  })
+}
+
+export async function updateTaskPlacement(
+  taskId: string,
+  order: number,
+  completed?: boolean,
+): Promise<void> {
+  const taskRef = doc(db, TASKS_COLLECTION, taskId)
+  await updateDoc(taskRef, {
+    order,
+    ...(completed === undefined ? {} : { completed }),
   })
 }
 

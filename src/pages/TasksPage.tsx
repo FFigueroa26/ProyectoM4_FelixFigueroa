@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { DndContext, DragOverlay, PointerSensor, closestCorners, pointerWithin, useSensor, useSensors, type CollisionDetection, type DragEndEvent, type DragStartEvent } from '@dnd-kit/core'
+import { arrayMove } from '@dnd-kit/sortable'
 import { CheckSquare, LogOut, Plus, Clock, CheckCircle2 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useTasks } from '../hooks/useTasks'
@@ -8,12 +10,21 @@ import { SendTaskSummaryButton } from '../components/tasks/SendTaskSummaryButton
 import { TaskProgressSummary } from '../components/tasks/TaskProgressSummary'
 import { TaskModal } from '../components/tasks/TaskModal'
 import { TaskFilters, type FilterType } from '../components/tasks/TaskFilters'
+import { updateTaskPlacement } from '../services/taskService'
 import type { Task, TaskInput } from '../types/task'
 
 const priorityRank = { high: 0, medium: 1, low: 2 } as const
 
+const collisionDetectionStrategy: CollisionDetection = (args) => {
+  const pointerCollisions = pointerWithin(args)
+  return pointerCollisions.length > 0 ? pointerCollisions : closestCorners(args)
+}
+
 function sortTasks(tasks: Task[]) {
   return [...tasks].sort((a, b) => {
+    if (typeof a.order === 'number' && typeof b.order === 'number' && a.order !== b.order) {
+      return a.order - b.order
+    }
     if (a.dueDate && b.dueDate && a.dueDate !== b.dueDate) return a.dueDate.localeCompare(b.dueDate)
     if (a.dueDate && !b.dueDate) return -1
     if (!a.dueDate && b.dueDate) return 1
@@ -31,7 +42,9 @@ export function TasksPage() {
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [currentFilter, setCurrentFilter] = useState<FilterType>('all')
+  const [draggedTask, setDraggedTask] = useState<Task | null>(null)
   const editFormRef = useRef<HTMLDivElement>(null)
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
 
   const filteredTasks = currentFilter === 'pending'
     ? tasks.filter((task) => !task.completed)
@@ -77,6 +90,58 @@ export function TasksPage() {
       if (previousTask?.id === id) setSelectedTask(previousTask)
       throw error
     }
+  }
+
+  const handleDragEnd = async ({ active, over }: DragEndEvent) => {
+    if (!over) {
+      setDraggedTask(null)
+      return
+    }
+
+    const activeId = String(active.id)
+    const activeTask = tasks.find((task) => task.id === activeId)
+    if (!activeTask) {
+      setDraggedTask(null)
+      return
+    }
+
+    const overTask = tasks.find((task) => task.id === String(over.id))
+    const targetCompleted = overTask ? overTask.completed : over.id === 'completed'
+    const sourceTasks = activeTask.completed ? completedTasks : pendingTasks
+    const targetTasks = targetCompleted ? completedTasks : pendingTasks
+    const sourceIndex = sourceTasks.findIndex((task) => task.id === activeId)
+    if (sourceIndex === -1) {
+      setDraggedTask(null)
+      return
+    }
+
+    if (activeTask.completed === targetCompleted) {
+      const targetIndex = targetTasks.findIndex((task) => task.id === String(over.id))
+      if (targetIndex === -1 || targetIndex === sourceIndex) {
+        setDraggedTask(null)
+        return
+      }
+
+      const reordered = arrayMove(sourceTasks, sourceIndex, targetIndex)
+      await Promise.all(reordered.map((task, index) => updateTaskPlacement(task.id, index)))
+      setDraggedTask(null)
+      return
+    }
+
+    const nextSource = sourceTasks.filter((task) => task.id !== activeId)
+    const targetIndex = overTask ? targetTasks.findIndex((task) => task.id === overTask.id) : targetTasks.length
+    const nextTarget = [...targetTasks]
+    nextTarget.splice(Math.max(targetIndex, 0), 0, { ...activeTask, completed: targetCompleted })
+
+    await Promise.all([
+      ...nextSource.map((task, index) => updateTaskPlacement(task.id, index)),
+      ...nextTarget.map((task, index) => updateTaskPlacement(task.id, index, task.id === activeId ? targetCompleted : undefined)),
+    ])
+    setDraggedTask(null)
+  }
+
+  const handleDragStart = ({ active }: DragStartEvent) => {
+    setDraggedTask(tasks.find((task) => task.id === String(active.id)) || null)
   }
 
   const userInitial = user?.email ? user.email.charAt(0).toUpperCase() : 'U'
@@ -144,13 +209,20 @@ export function TasksPage() {
           </div>
         )}
 
-        <TaskFilters value={currentFilter} onChange={setCurrentFilter} />
-
-        <div
-          className={`grid grid-cols-1 gap-5 items-start ${
-            showsBothStatuses ? 'md:grid-cols-2' : ''
-          }`}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={collisionDetectionStrategy}
+          onDragStart={handleDragStart}
+          onDragCancel={() => setDraggedTask(null)}
+          onDragEnd={handleDragEnd}
         >
+          <TaskFilters value={currentFilter} onChange={setCurrentFilter} />
+
+          <div
+            className={`grid grid-cols-1 gap-5 items-start ${
+              showsBothStatuses ? 'md:grid-cols-2' : ''
+            }`}
+          >
           {showPending && <div className="h-full bg-[#1c1338]/70 border border-[#3b2769] rounded-2xl p-4 shadow-xl backdrop-blur-md">
             <div className="flex items-center justify-between mb-3.5 pb-2 border-b border-[#362459]">
               <div className="flex items-center gap-2">
@@ -189,6 +261,7 @@ export function TasksPage() {
               onDelete={removeTask}
               onSelect={(task) => setSelectedTask(task)}
               emptyMessage="No tienes tareas pendientes."
+              listId="pending"
             />
           </div>}
 
@@ -212,9 +285,24 @@ export function TasksPage() {
               onDelete={removeTask}
               onSelect={(task) => setSelectedTask(task)}
               emptyMessage="Aún no has completado tareas."
+              listId="completed"
             />
           </div>}
-        </div>
+          </div>
+          <DragOverlay dropAnimation={null}>
+            {draggedTask ? (
+              <div className="w-[min(28rem,calc(100vw-2rem))] rounded-xl border border-violet-300/70 bg-[#302852] p-3.5 shadow-2xl shadow-black/40 ring-2 ring-violet-400/30 rotate-1">
+                <p className="text-[15px] font-semibold text-white">{draggedTask.title}</p>
+                <div className="mt-2 flex items-center gap-2 text-xs text-slate-300">
+                  <span className="rounded-md bg-violet-500/20 px-2 py-1">
+                    {draggedTask.priority === 'high' ? 'Alta' : draggedTask.priority === 'low' ? 'Baja' : 'Media'}
+                  </span>
+                  {draggedTask.dueDate && <span>{draggedTask.dueDate}</span>}
+                </div>
+              </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
 
         {selectedTask && (
           <TaskModal
