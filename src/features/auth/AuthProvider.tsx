@@ -5,6 +5,7 @@ import {
   loginWithEmail,
   registerWithEmail,
   loginWithGoogle,
+  resetPassword,
   logoutUser,
 } from '../../services/authService'
 import { AuthContext } from './authContext'
@@ -33,6 +34,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await loginWithGoogle()
   }
 
+  const handleResetPassword = async (email: string) => {
+    await resetPassword(email)
+  }
+
   const logout = async () => {
     await logoutUser()
   }
@@ -45,6 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         register,
         loginWithGoogle: handleGoogleLogin,
+        resetPassword: handleResetPassword,
         logout,
       }}
     >

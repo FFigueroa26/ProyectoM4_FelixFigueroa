@@ -65,7 +65,6 @@ export function RegisterPage() {
 
   return (
     <AuthPageShell
-      brandSubtitle="Crea tu cuenta y empieza a organizarte"
       title="Crear Cuenta"
       description="Regístrate gratis con tu email o Google"
       error={error}
@@ -81,7 +80,7 @@ export function RegisterPage() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <AuthTextField
           id="email"
-          label="Correo electrónico"
+          label="Correo electrónico *"
           type="email"
           placeholder="ejemplo@matecode.com"
           value={email}
@@ -92,7 +91,7 @@ export function RegisterPage() {
 
         <AuthTextField
           id="password"
-          label="Contraseña"
+          label="Contraseña *"
           type="password"
           placeholder="Mínimo 6 caracteres"
           value={password}
@@ -103,7 +102,7 @@ export function RegisterPage() {
 
         <AuthTextField
           id="confirmPassword"
-          label="Confirmar Contraseña"
+          label="Confirmar Contraseña *"
           type="password"
           placeholder="Repite la contraseña"
           value={confirmPassword}

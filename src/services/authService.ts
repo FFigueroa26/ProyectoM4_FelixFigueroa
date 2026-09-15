@@ -4,6 +4,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
+  sendPasswordResetEmail,
 } from 'firebase/auth'
 import { auth } from './firebase'
 
@@ -23,6 +24,8 @@ export function getAuthErrorMessage(code: string): string {
       return 'La contraseña debe tener al menos 6 caracteres.'
     case 'auth/popup-closed-by-user':
       return 'Inicio de sesión con Google cancelado.'
+    case 'auth/missing-email':
+      return 'Ingresa tu correo electrónico para recuperar la contraseña.'
     default:
       return 'Ocurrió un error inesperado al autenticar.'
   }
@@ -43,4 +46,8 @@ export async function loginWithGoogle() {
 
 export async function logoutUser() {
   return signOut(auth)
+}
+
+export async function resetPassword(email: string) {
+  return sendPasswordResetEmail(auth, email)
 }

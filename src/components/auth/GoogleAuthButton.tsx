@@ -9,7 +9,7 @@ export function GoogleAuthButton({ disabled, onClick }: GoogleAuthButtonProps) {
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="w-full py-2.5 px-4 bg-[#1a1728] hover:bg-[#201c33] border border-[#393456] rounded-xl text-sm font-medium text-slate-200 hover:text-white transition flex items-center justify-center gap-2.5 disabled:opacity-50 cursor-pointer"
+      className="w-full py-2.5 px-4 bg-[#1a1728] hover:bg-[#201c33] border border-[#393456] rounded-xl text-base font-medium text-slate-200 hover:text-white transition flex items-center justify-center gap-2.5 disabled:opacity-50 cursor-pointer"
     >
       <svg className="w-4 h-4" viewBox="0 0 24 24">
         <path

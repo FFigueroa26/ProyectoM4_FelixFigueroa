@@ -12,14 +12,16 @@ export function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [resetMessage, setResetMessage] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
-  const { login, loginWithGoogle } = useAuth()
+  const { login, loginWithGoogle, resetPassword } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError(null)
+    setResetMessage(null)
 
     if (!email.trim() || !password) {
       setError('Por favor completa todos los campos.')
@@ -30,6 +32,27 @@ export function LoginPage() {
     try {
       await login(email, password)
       navigate('/')
+    } catch (err: unknown) {
+      const firebaseError = err as { code?: string }
+      setError(getAuthErrorMessage(firebaseError.code || ''))
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleResetPassword = async () => {
+    setError(null)
+    setResetMessage(null)
+
+    if (!email.trim()) {
+      setError('Ingresa tu correo electrónico para recuperar la contraseña.')
+      return
+    }
+
+    setSubmitting(true)
+    try {
+      await resetPassword(email.trim())
+      setResetMessage('Te enviamos un enlace para restablecer tu contraseña.')
     } catch (err: unknown) {
       const firebaseError = err as { code?: string }
       setError(getAuthErrorMessage(firebaseError.code || ''))
@@ -54,9 +77,8 @@ export function LoginPage() {
 
   return (
     <AuthPageShell
-      brandSubtitle="Gestión ordenada y sencilla de tus tareas"
-      title="Iniciar Sesión"
-      description="Ingresa tus datos para acceder a tu cuenta"
+      title="¡Hola de nuevo!"
+      description="¡Nos alegramos de volverte a ver!"
       error={error}
       footer={
         <p className="mt-6 text-center text-xs text-slate-400">
@@ -72,23 +94,39 @@ export function LoginPage() {
           id="email"
           label="Correo electrónico"
           type="email"
-          placeholder="ejemplo@matecode.com"
+          placeholder=""
           value={email}
           autoComplete="email"
           icon={Mail}
           onChange={setEmail}
+          autoFocus
         />
 
         <AuthTextField
           id="password"
           label="Contraseña"
           type="password"
-          placeholder="••••••••"
+          placeholder=""
           value={password}
           autoComplete="current-password"
           icon={Lock}
           onChange={setPassword}
         />
+
+        <div className="-mt-2 text-right">
+          <button
+            type="button"
+            onClick={handleResetPassword}
+            disabled={submitting}
+            className="text-xs text-violet-400 hover:text-violet-300 transition cursor-pointer disabled:opacity-50"
+          >
+            ¿Olvidaste tu contraseña?
+          </button>
+        </div>
+
+        {resetMessage && (
+          <p className="-mt-2 text-xs text-emerald-300">{resetMessage}</p>
+        )}
 
         <button
           type="submit"
