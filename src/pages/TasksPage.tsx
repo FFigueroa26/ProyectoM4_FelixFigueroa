@@ -10,6 +10,7 @@ import { SendTaskSummaryButton } from '../components/tasks/SendTaskSummaryButton
 import { TaskProgressSummary } from '../components/tasks/TaskProgressSummary'
 import { TaskModal } from '../components/tasks/TaskModal'
 import { TaskFilters, type FilterType } from '../components/tasks/TaskFilters'
+import { ThemeToggle } from '../components/common/ThemeToggle'
 import { updateTaskPlacement } from '../services/taskService'
 import type { Task, TaskInput } from '../types/task'
 
@@ -147,34 +148,36 @@ export function TasksPage() {
   const userInitial = user?.email ? user.email.charAt(0).toUpperCase() : 'U'
 
   return (
-    <div className="min-h-screen text-slate-100 pb-16">
-      <header className="sticky top-0 z-30 bg-[#140d26]/70 border-b border-[#362459] backdrop-blur-md">
+    <div className="min-h-screen text-slate-800 dark:text-slate-100 pb-16">
+      <header className="sticky top-0 z-30 bg-white/80 dark:bg-[#140d26]/70 border-b border-slate-200/80 dark:border-[#362459] backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-xl bg-violet-600 flex items-center justify-center shadow-md shadow-violet-600/30">
               <CheckSquare className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-white text-xl tracking-tight flex items-center gap-2">
+            <span className="font-bold text-slate-900 dark:text-white text-xl tracking-tight flex items-center gap-2">
               MateCode
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-700 dark:text-violet-300 border border-violet-500/30">
                 Tablero
               </span>
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-[#20153d] border border-[#3b276b] text-xs">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-[#20153d] border border-slate-200 dark:border-[#3b276b] text-xs">
               <div className="w-5 h-5 rounded-full bg-violet-500 text-[10px] font-bold text-white flex items-center justify-center">
                 {userInitial}
               </div>
-              <span className="text-slate-300 max-w-[160px] truncate">{user?.email}</span>
+              <span className="text-slate-700 dark:text-slate-300 max-w-[160px] truncate">{user?.email}</span>
             </div>
+
+            <ThemeToggle />
 
             <button
               type="button"
               onClick={() => logout()}
               title="Cerrar sesión"
-              className="px-3 py-1.5 bg-[#20153d] hover:bg-[#2b1c52] border border-[#3b276b] rounded-xl text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-[#20153d] dark:hover:bg-[#2b1c52] border border-slate-200 dark:border-[#3b276b] rounded-xl text-xs font-medium text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition flex items-center gap-1.5 cursor-pointer"
             >
               <LogOut size={13} />
               <span>Cerrar sesión</span>
@@ -223,13 +226,13 @@ export function TasksPage() {
               showsBothStatuses ? 'md:grid-cols-2' : ''
             }`}
           >
-          {showPending && <div className="h-full bg-[#1c1338]/70 border border-[#3b2769] rounded-2xl p-4 shadow-xl backdrop-blur-md">
-            <div className="flex items-center justify-between mb-3.5 pb-2 border-b border-[#362459]">
+          {showPending && <div className="h-full bg-white/80 dark:bg-[#1c1338]/70 border border-slate-200 dark:border-[#3b2769] rounded-2xl p-4 shadow-lg dark:shadow-xl backdrop-blur-md">
+            <div className="flex items-center justify-between mb-3.5 pb-2 border-b border-slate-200 dark:border-[#362459]">
               <div className="flex items-center gap-2">
-                <Clock size={16} className="text-violet-400" />
-                <h3 className="font-semibold text-sm text-white">Pendientes</h3>
+                <Clock size={16} className="text-violet-600 dark:text-violet-400" />
+                <h3 className="font-semibold text-sm text-slate-900 dark:text-white">Pendientes</h3>
               </div>
-              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[#2e1d57] text-violet-300 border border-violet-500/20">
+              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-100 dark:bg-[#2e1d57] text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-500/20">
                 {pendingTasks.length}
               </span>
             </div>
@@ -245,7 +248,7 @@ export function TasksPage() {
               <button
                 type="button"
                 onClick={() => setIsAdding(true)}
-                className="w-full py-2 mb-3 px-3 rounded-xl border border-dashed border-[#4d3285] hover:border-violet-400 bg-[#251847]/40 hover:bg-[#2a1b52] text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer flex items-center justify-center gap-1.5"
+                className="w-full py-2 mb-3 px-3 rounded-xl border border-dashed border-slate-300 hover:border-violet-500 dark:border-[#4d3285] dark:hover:border-violet-400 bg-slate-50/80 hover:bg-violet-50/60 dark:bg-[#251847]/40 dark:hover:bg-[#2a1b52] text-slate-600 hover:text-violet-700 dark:text-slate-300 dark:hover:text-white text-xs font-medium transition cursor-pointer flex items-center justify-center gap-1.5"
               >
                 <Plus size={14} />
                 <span>Añadir una tarea</span>
@@ -265,13 +268,13 @@ export function TasksPage() {
             />
           </div>}
 
-          {showCompleted && <div className="h-full bg-[#1c1338]/70 border border-[#3b2769] rounded-2xl p-4 shadow-xl backdrop-blur-md">
-            <div className="flex items-center justify-between mb-3.5 pb-2 border-b border-[#362459]">
+          {showCompleted && <div className="h-full bg-white/80 dark:bg-[#1c1338]/70 border border-slate-200 dark:border-[#3b2769] rounded-2xl p-4 shadow-lg dark:shadow-xl backdrop-blur-md">
+            <div className="flex items-center justify-between mb-3.5 pb-2 border-b border-slate-200 dark:border-[#362459]">
               <div className="flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-emerald-400" />
-                <h3 className="font-semibold text-sm text-white">Completadas</h3>
+                <CheckCircle2 size={16} className="text-emerald-600 dark:text-emerald-400" />
+                <h3 className="font-semibold text-sm text-slate-900 dark:text-white">Completadas</h3>
               </div>
-              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-950/40 text-emerald-300 border border-emerald-500/30">
+              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30">
                 {completedTasks.length}
               </span>
             </div>

@@ -38,13 +38,13 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
       <div
-        className="w-full max-w-xl bg-[#221e35] border border-[#393456] rounded-2xl shadow-2xl p-6 text-slate-200 relative overflow-hidden"
+        className="w-full max-w-xl bg-white dark:bg-[#221e35] border border-slate-200 dark:border-[#393456] rounded-2xl shadow-2xl p-6 text-slate-800 dark:text-slate-200 relative overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#2c2744] transition cursor-pointer"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-[#2c2744] transition cursor-pointer"
         >
           <X size={18} />
         </button>
@@ -57,12 +57,12 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
             className={`mt-1 rounded-full transition cursor-pointer shrink-0 ${
               task.completed
                 ? 'text-white bg-emerald-500 shadow-md shadow-emerald-500/30 scale-105'
-                : 'text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10'
+                : 'text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10'
             }`}
             title={task.completed ? 'Marcar como pendiente' : 'Marcar como completada'}
           >
             {task.completed ? (
-              <CheckCircle2 size={22} className="text-emerald-400" />
+              <CheckCircle2 size={22} className="text-emerald-500 dark:text-emerald-400" />
             ) : (
               <Circle size={22} />
             )}
@@ -75,7 +75,7 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-1.5 bg-[#171424] border border-[#443e66] rounded-lg text-white font-semibold text-lg focus:outline-none focus:border-violet-400"
+                  className="w-full px-3 py-1.5 bg-slate-50 dark:bg-[#171424] border border-slate-200 dark:border-[#443e66] rounded-lg text-slate-900 dark:text-white font-semibold text-lg focus:outline-none focus:border-violet-500 dark:focus:border-violet-400"
                   autoFocus
                 />
                 <button
@@ -90,8 +90,8 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
               <div className="flex items-center gap-2 group">
                 <h2
                   onClick={() => setIsEditingTitle(true)}
-                  className={`text-lg font-bold cursor-pointer hover:text-violet-200 transition ${
-                    task.completed ? 'line-through text-slate-400' : 'text-white'
+                  className={`text-lg font-bold cursor-pointer hover:text-violet-600 dark:hover:text-violet-200 transition ${
+                    task.completed ? 'line-through text-slate-400' : 'text-slate-900 dark:text-white'
                   }`}
                 >
                   {task.title}
@@ -99,26 +99,26 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
                 <button
                   type="button"
                   onClick={() => setIsEditingTitle(true)}
-                  className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-white transition p-1 cursor-pointer"
+                  className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-700 dark:hover:text-white transition p-1 cursor-pointer"
                 >
                   <Edit3 size={13} />
                 </button>
               </div>
             )}
 
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               En lista:{' '}
-              <span className={`font-semibold ${task.completed ? 'text-emerald-400' : 'text-violet-400'}`}>
+              <span className={`font-semibold ${task.completed ? 'text-emerald-600 dark:text-emerald-400' : 'text-violet-600 dark:text-violet-400'}`}>
                 {task.completed ? 'Completadas' : 'Pendientes'}
               </span>
             </p>
 
             <div className="flex items-center gap-2 flex-wrap mt-3 text-xs">
-              <span className="inline-flex items-center gap-1 text-amber-300">
+              <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-300 font-medium">
                 <Flag size={13} /> Prioridad: {task.priority === 'high' ? 'Alta' : task.priority === 'low' ? 'Baja' : 'Media'}
               </span>
               {task.dueDate && (
-                <span className="inline-flex items-center gap-1 text-slate-400">
+                <span className="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400">
                   <CalendarDays size={13} /> Vence: {task.dueDate}
                 </span>
               )}
@@ -128,15 +128,15 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
 
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2 text-sm font-semibold text-white">
-              <AlignLeft size={16} className="text-slate-400" />
+            <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-white">
+              <AlignLeft size={16} className="text-slate-500 dark:text-slate-400" />
               <span>Descripción</span>
             </div>
             {!isEditingDesc && task.description && (
               <button
                 type="button"
                 onClick={() => setIsEditingDesc(true)}
-                className="text-xs text-slate-400 hover:text-white bg-[#2b2642] px-2.5 py-1 rounded-lg transition cursor-pointer"
+                className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-[#2b2642] px-2.5 py-1 rounded-lg transition cursor-pointer"
               >
                 Editar
               </button>
@@ -150,7 +150,7 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Añadir una descripción más detallada..."
-                className="w-full p-3 bg-[#171424] border border-[#443e66] rounded-xl text-white text-sm focus:outline-none focus:border-violet-400 resize-none"
+                className="w-full p-3 bg-slate-50 dark:bg-[#171424] border border-slate-200 dark:border-[#443e66] rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:border-violet-500 dark:focus:border-violet-400 resize-none"
                 autoFocus
               />
               <div className="flex items-center gap-2">
@@ -167,7 +167,7 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
                     setDescription(task.description || '')
                     setIsEditingDesc(false)
                   }}
-                  className="px-3 py-1.5 bg-[#2b2642] hover:bg-[#383256] text-slate-300 rounded-lg text-xs cursor-pointer"
+                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-[#2b2642] dark:hover:bg-[#383256] text-slate-700 dark:text-slate-300 rounded-lg text-xs cursor-pointer"
                 >
                   Cancelar
                 </button>
@@ -176,7 +176,7 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
           ) : task.description ? (
             <div
               onClick={() => setIsEditingDesc(true)}
-              className="p-3 bg-[#181527] border border-[#342f4e] rounded-xl text-sm text-slate-300 whitespace-pre-wrap cursor-pointer hover:border-[#463f68] transition"
+              className="p-3 bg-slate-50 dark:bg-[#181527] border border-slate-200 dark:border-[#342f4e] rounded-xl text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap cursor-pointer hover:border-violet-300 dark:hover:border-[#463f68] transition"
             >
               {task.description}
             </div>
@@ -184,18 +184,18 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
             <button
               type="button"
               onClick={() => setIsEditingDesc(true)}
-              className="w-full p-3 text-left bg-[#181527] hover:bg-[#201c33] border border-[#342f4e] rounded-xl text-xs text-slate-400 hover:text-slate-300 transition cursor-pointer"
+              className="w-full p-3 text-left bg-slate-50 hover:bg-slate-100 dark:bg-[#181527] dark:hover:bg-[#201c33] border border-slate-200 dark:border-[#342f4e] rounded-xl text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition cursor-pointer"
             >
               Añadir una descripción más detallada...
             </button>
           )}
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-[#342f4e]">
+        <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-[#342f4e]">
           <button
             type="button"
             onClick={handleDelete}
-            className="px-3 py-1.5 bg-red-950/40 hover:bg-red-950/70 border border-red-500/30 text-red-300 rounded-xl text-xs font-medium transition cursor-pointer flex items-center gap-1.5"
+            className="px-3 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-950/70 border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-300 rounded-xl text-xs font-medium transition cursor-pointer flex items-center gap-1.5"
           >
             <Trash2 size={13} />
             <span>Eliminar tarea</span>
@@ -204,7 +204,7 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-1.5 bg-[#2b2642] hover:bg-[#383256] text-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
+            className="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-[#2b2642] dark:hover:bg-[#383256] text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
           >
             Cerrar
           </button>

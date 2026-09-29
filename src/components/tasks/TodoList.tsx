@@ -31,17 +31,17 @@ export function TodoList({
 
   if (loading) {
     return (
-      <div ref={setNodeRef} className={`bg-[#1e1b2e]/60 border rounded-xl p-8 text-center flex flex-col items-center justify-center transition ${isOver ? 'border-violet-400 bg-violet-500/10' : 'border-[#393456]'}`}>
-        <Loader2 className="w-5 h-5 text-violet-400 animate-spin mb-2" />
-        <p className="text-xs text-slate-300">Cargando tareas...</p>
+      <div ref={setNodeRef} className={`bg-white/80 dark:bg-[#1e1b2e]/60 border rounded-xl p-8 text-center flex flex-col items-center justify-center transition ${isOver ? 'border-violet-500 bg-violet-500/10' : 'border-slate-200 dark:border-[#393456]'}`}>
+        <Loader2 className="w-5 h-5 text-violet-600 dark:text-violet-400 animate-spin mb-2" />
+        <p className="text-xs text-slate-600 dark:text-slate-300">Cargando tareas...</p>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div ref={setNodeRef} className="bg-red-950/30 border border-red-500/30 rounded-xl p-4 text-center text-red-200 text-xs flex items-center justify-center gap-2">
-        <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+      <div ref={setNodeRef} className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-500/30 rounded-xl p-4 text-center text-red-700 dark:text-red-200 text-xs flex items-center justify-center gap-2">
+        <AlertCircle className="w-4 h-4 text-red-500 dark:text-red-400 shrink-0" />
         <span>{error}</span>
       </div>
     )
@@ -49,9 +49,9 @@ export function TodoList({
 
   if (tasks.length === 0) {
     return (
-      <div ref={setNodeRef} className={`bg-[#1b182b]/40 border border-dashed rounded-xl p-6 text-center flex flex-col items-center justify-center transition ${isOver ? 'border-violet-400 bg-violet-500/10' : 'border-[#393456]'}`}>
-        <Inbox size={20} className="text-slate-500 mb-2" />
-        <p className="text-xs text-slate-400">{emptyMessage}</p>
+      <div ref={setNodeRef} className={`bg-slate-50/60 dark:bg-[#1b182b]/40 border border-dashed rounded-xl p-6 text-center flex flex-col items-center justify-center transition ${isOver ? 'border-violet-500 bg-violet-500/10' : 'border-slate-200 dark:border-[#393456]'}`}>
+        <Inbox size={20} className="text-slate-400 dark:text-slate-500 mb-2" />
+        <p className="text-xs text-slate-500 dark:text-slate-400">{emptyMessage}</p>
       </div>
     )
   }

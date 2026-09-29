@@ -81,9 +81,9 @@ export function LoginPage() {
       description="¡Nos alegramos de volverte a ver!"
       error={error}
       footer={
-        <p className="mt-6 text-center text-xs text-slate-400">
+        <p className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">
           ¿Aún no tienes cuenta?{' '}
-          <Link to="/register" className="text-violet-400 hover:text-violet-300 font-medium transition">
+          <Link to="/register" className="text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-medium transition">
             Crea tu cuenta aquí
           </Link>
         </p>
@@ -118,14 +118,14 @@ export function LoginPage() {
             type="button"
             onClick={handleResetPassword}
             disabled={submitting}
-            className="text-xs text-violet-400 hover:text-violet-300 transition cursor-pointer disabled:opacity-50"
+            className="text-xs text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition cursor-pointer disabled:opacity-50"
           >
             ¿Olvidaste tu contraseña?
           </button>
         </div>
 
         {resetMessage && (
-          <p className="-mt-2 text-xs text-emerald-300">{resetMessage}</p>
+          <p className="-mt-2 text-xs text-emerald-600 dark:text-emerald-300">{resetMessage}</p>
         )}
 
         <button

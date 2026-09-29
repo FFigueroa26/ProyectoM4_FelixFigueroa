@@ -49,27 +49,27 @@ export function TodoForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-[#242038] border border-[#393456] rounded-2xl p-4 shadow-lg"
+      className="bg-white/90 dark:bg-[#242038] border border-slate-200 dark:border-[#393456] rounded-2xl p-4 shadow-md dark:shadow-lg"
     >
       <div className="flex items-center gap-2 mb-3">
-        <div className={`p-1.5 rounded-lg ${isEditing ? 'bg-amber-500/20 text-amber-300' : 'bg-violet-500/20 text-violet-300'}`}>
+        <div className={`p-1.5 rounded-lg ${isEditing ? 'bg-amber-500/20 text-amber-600 dark:text-amber-300' : 'bg-violet-500/20 text-violet-600 dark:text-violet-300'}`}>
           {isEditing ? <Edit3 size={15} /> : <PlusCircle size={15} />}
         </div>
-        <h3 className="text-sm font-semibold text-white">
+        <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
           {isEditing ? 'Editar Tarea' : 'Nueva Tarea'}
         </h3>
       </div>
 
       {error && (
-        <div className="mb-3 p-2.5 bg-red-950/40 border border-red-500/30 rounded-xl text-red-200 text-xs flex items-center gap-2">
-          <AlertCircle size={14} className="shrink-0 text-red-400" />
+        <div className="mb-3 p-2.5 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-500/30 rounded-xl text-red-700 dark:text-red-200 text-xs flex items-center gap-2">
+          <AlertCircle size={14} className="shrink-0 text-red-500 dark:text-red-400" />
           <span>{error}</span>
         </div>
       )}
 
       <div className="space-y-3">
         <div>
-          <label htmlFor="task-title" className="block text-xs font-medium text-slate-300 mb-1">
+          <label htmlFor="task-title" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
             Título *
           </label>
           <input
@@ -78,13 +78,13 @@ export function TodoForm({
             placeholder="¿Qué necesitas hacer?"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-3 py-2 bg-[#1b182b] border border-[#393456] rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400/30 transition"
+            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#1b182b] border border-slate-200 dark:border-[#393456] rounded-xl text-slate-900 dark:text-white text-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-violet-500 dark:focus:border-violet-400 focus:ring-1 focus:ring-violet-500/20 dark:focus:ring-violet-400/30 transition"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label htmlFor="task-due-date" className="flex items-center gap-1 text-xs font-medium text-slate-300 mb-1">
+            <label htmlFor="task-due-date" className="flex items-center gap-1 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
               <CalendarDays size={12} /> Fecha de vencimiento
             </label>
             <input
@@ -92,20 +92,19 @@ export function TodoForm({
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              style={{ colorScheme: 'dark' }}
-              className="w-full px-3 py-2 bg-[#1b182b] border border-[#393456] rounded-xl text-white text-sm focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400/30 transition"
+              className="w-full px-3 py-2 bg-slate-50 dark:bg-[#1b182b] border border-slate-200 dark:border-[#393456] rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:border-violet-500 dark:focus:border-violet-400 focus:ring-1 focus:ring-violet-500/20 dark:focus:ring-violet-400/30 transition"
             />
           </div>
 
           <div>
-            <label htmlFor="task-priority" className="flex items-center gap-1 text-xs font-medium text-slate-300 mb-1">
+            <label htmlFor="task-priority" className="flex items-center gap-1 text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
               <Flag size={12} /> Prioridad
             </label>
             <select
               id="task-priority"
               value={priority}
               onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high')}
-              className="w-full px-3 py-2 bg-[#1b182b] border border-[#393456] rounded-xl text-white text-sm focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400/30 transition"
+              className="w-full px-3 py-2 bg-slate-50 dark:bg-[#1b182b] border border-slate-200 dark:border-[#393456] rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:border-violet-500 dark:focus:border-violet-400 focus:ring-1 focus:ring-violet-500/20 dark:focus:ring-violet-400/30 transition"
             >
               <option value="high">Alta</option>
               <option value="medium">Media</option>
@@ -115,7 +114,7 @@ export function TodoForm({
         </div>
 
         <div>
-          <label htmlFor="task-description" className="block text-xs font-medium text-slate-300 mb-1">
+          <label htmlFor="task-description" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
             Descripción (opcional)
           </label>
           <textarea
@@ -124,7 +123,7 @@ export function TodoForm({
             placeholder="Añadir una descripción más detallada..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-3 py-2 bg-[#1b182b] border border-[#393456] rounded-xl text-white text-sm placeholder-slate-500 focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-400/30 resize-none transition"
+            className="w-full px-3 py-2 bg-slate-50 dark:bg-[#1b182b] border border-slate-200 dark:border-[#393456] rounded-xl text-slate-900 dark:text-white text-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-violet-500 dark:focus:border-violet-400 focus:ring-1 focus:ring-violet-500/20 dark:focus:ring-violet-400/30 resize-none transition"
           />
         </div>
 
@@ -153,7 +152,7 @@ export function TodoForm({
             <button
               type="button"
               onClick={onCancel}
-              className="px-3 py-1.5 bg-[#1b182b] hover:bg-[#2e2947] border border-[#393456] text-slate-300 hover:text-white rounded-xl text-xs font-medium transition cursor-pointer flex items-center gap-1"
+              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-[#1b182b] dark:hover:bg-[#2e2947] border border-slate-200 dark:border-[#393456] text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white rounded-xl text-xs font-medium transition cursor-pointer flex items-center gap-1"
             >
               <X size={13} />
               <span>Cancelar</span>

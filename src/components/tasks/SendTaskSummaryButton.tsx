@@ -56,12 +56,12 @@ export function SendTaskSummaryButton({ tasks }: SendTaskSummaryButtonProps) {
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="flex items-center gap-2 min-w-0">
-        <div className="p-1.5 rounded-lg bg-violet-500/15 text-violet-300 border border-violet-500/20 shrink-0">
+        <div className="p-1.5 rounded-lg bg-violet-500/15 text-violet-600 dark:text-violet-300 border border-violet-500/20 shrink-0">
           <Mail size={15} />
         </div>
         <div className="min-w-0">
-          <h4 className="text-sm font-semibold text-white truncate">Resumen por correo</h4>
-          <p className="text-[11px] text-slate-400 truncate">Resumen actualizado de tus tareas</p>
+          <h4 className="text-sm font-semibold text-slate-800 dark:text-white truncate">Resumen por correo</h4>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">Resumen actualizado de tus tareas</p>
         </div>
       </div>
 

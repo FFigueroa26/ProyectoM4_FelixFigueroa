@@ -1,17 +1,30 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    color: #f3f2f8;
+    color: #1e1b4b;
     min-height: 100vh;
+    background-color: #f6f5fb;
+    background-image:
+      radial-gradient(ellipse at 15% 15%, rgba(139, 92, 246, 0.15) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 25%, rgba(192, 132, 252, 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 85%, rgba(99, 102, 241, 0.12) 0%, transparent 55%),
+      linear-gradient(145deg, #faf8ff 0%, #f3effe 50%, #eee8fc 100%);
+    background-attachment: fixed;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark body {
+    color: #f3f2f8;
     background-color: #160f26;
     background-image:
       radial-gradient(ellipse at 15% 15%, rgba(124, 58, 237, 0.45) 0%, transparent 55%),
       radial-gradient(ellipse at 85% 25%, rgba(168, 85, 247, 0.4) 0%, transparent 50%),
       radial-gradient(ellipse at 70% 85%, rgba(99, 102, 241, 0.35) 0%, transparent 55%),
       linear-gradient(145deg, #2a1b4e 0%, #1a1130 50%, #120b22 100%);
-    background-attachment: fixed;
   }
 }
 
@@ -20,12 +33,21 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
+  background: rgba(226, 232, 240, 0.6);
+}
+.dark ::-webkit-scrollbar-track {
   background: rgba(18, 11, 34, 0.7);
 }
 ::-webkit-scrollbar-thumb {
-  background: #4c3275;
+  background: #cbd5e1;
   border-radius: 9999px;
 }
+.dark ::-webkit-scrollbar-thumb {
+  background: #4c3275;
+}
 ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
   background: #6d47a8;
 }

@@ -55,8 +55,8 @@ export function TodoItem({ task, onToggle, onEdit, onDelete, onSelect }: TodoIte
         isDragging ? 'opacity-50 ring-2 ring-violet-400' : ''
       } ${
         task.completed
-          ? 'bg-[#1e1b2e]/60 border-[#2f2b47] opacity-75'
-          : 'bg-[#26223b] hover:bg-[#2c2844] border-[#393456] hover:border-[#4c4672] shadow-sm'
+          ? 'bg-slate-100/70 border-slate-200 opacity-75 dark:bg-[#1e1b2e]/60 dark:border-[#2f2b47]'
+          : 'bg-white hover:bg-slate-50/80 border-slate-200 hover:border-violet-300 dark:bg-[#26223b] dark:hover:bg-[#2c2844] dark:border-[#393456] dark:hover:border-[#4c4672] shadow-xs'
       }`}
     >
       <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -71,10 +71,10 @@ export function TodoItem({ task, onToggle, onEdit, onDelete, onSelect }: TodoIte
             aria-label={task.completed ? 'Marcar como pendiente' : 'Marcar como completada'}
             className="peer sr-only"
           />
-          <div className="w-5 h-5 rounded-md border-2 border-slate-500 peer-checked:border-emerald-400 peer-checked:bg-emerald-500 peer-checked:scale-110 transition flex items-center justify-center bg-[#191627] shadow-sm peer-checked:shadow-emerald-500/40">
+          <div className="w-5 h-5 rounded-md border-2 border-slate-300 dark:border-slate-500 peer-checked:border-emerald-500 dark:peer-checked:border-emerald-400 peer-checked:bg-emerald-500 peer-checked:scale-110 transition flex items-center justify-center bg-white dark:bg-[#191627] shadow-sm peer-checked:shadow-emerald-500/40">
             <Check size={14} className="text-white opacity-0 peer-checked:opacity-100 transition-opacity" />
           </div>
-          <span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-[#100c1d] px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover/check:opacity-100">
+          <span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-slate-900 dark:bg-[#100c1d] px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover/check:opacity-100">
             {task.completed ? 'Marcar como pendiente' : 'Marcar como completada'}
           </span>
         </label>
@@ -82,14 +82,14 @@ export function TodoItem({ task, onToggle, onEdit, onDelete, onSelect }: TodoIte
         <div className="flex-1 min-w-0">
           <h4
             className={`text-[15px] font-medium leading-snug break-words transition ${
-              task.completed ? 'line-through text-slate-400' : 'text-slate-100'
+              task.completed ? 'line-through text-slate-400 dark:text-slate-400' : 'text-slate-800 dark:text-slate-100'
             }`}
           >
             {task.title}
           </h4>
 
           {task.description && (
-            <div className="flex items-center gap-1 text-xs text-slate-400 mt-1.5">
+            <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 mt-1.5">
               <AlignLeft size={12} className="shrink-0" />
               <span className="truncate max-w-[200px]">{task.description}</span>
             </div>
@@ -100,7 +100,7 @@ export function TodoItem({ task, onToggle, onEdit, onDelete, onSelect }: TodoIte
               <Flag size={11} /> {priorityLabel}
             </span>
             {task.dueDate && (
-              <span className="inline-flex items-center gap-1 text-slate-400">
+              <span className="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400">
                 <CalendarDays size={11} /> {task.dueDate}
               </span>
             )}
@@ -114,11 +114,11 @@ export function TodoItem({ task, onToggle, onEdit, onDelete, onSelect }: TodoIte
             type="button"
             onClick={handleEdit}
             aria-label="Editar tarea"
-            className="p-1 text-slate-400 hover:text-white hover:bg-[#383256] rounded-lg transition cursor-pointer"
+            className="p-1 text-slate-400 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-[#383256] rounded-lg transition cursor-pointer"
           >
             <Edit3 size={13} />
           </button>
-          <span className="pointer-events-none absolute bottom-full right-0 z-10 mb-2 whitespace-nowrap rounded-md bg-[#100c1d] px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover/action:opacity-100">
+          <span className="pointer-events-none absolute bottom-full right-0 z-10 mb-2 whitespace-nowrap rounded-md bg-slate-900 dark:bg-[#100c1d] px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover/action:opacity-100">
             Editar tarea
           </span>
         </div>
@@ -128,11 +128,11 @@ export function TodoItem({ task, onToggle, onEdit, onDelete, onSelect }: TodoIte
             type="button"
             onClick={handleDelete}
             aria-label="Eliminar tarea"
-            className="p-1 text-red-400 hover:text-red-300 hover:bg-red-950/40 rounded-lg transition cursor-pointer"
+            className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/40 rounded-lg transition cursor-pointer"
           >
             <Trash2 size={13} />
           </button>
-          <span className="pointer-events-none absolute bottom-full right-0 z-10 mb-2 whitespace-nowrap rounded-md bg-[#100c1d] px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover/action:opacity-100">
+          <span className="pointer-events-none absolute bottom-full right-0 z-10 mb-2 whitespace-nowrap rounded-md bg-slate-900 dark:bg-[#100c1d] px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover/action:opacity-100">
             Eliminar tarea
           </span>
         </div>

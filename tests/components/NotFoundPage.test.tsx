@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import { MemoryRouter } from 'react-router-dom'
+import { ThemeProvider } from '../../src/features/theme/ThemeProvider'
 import { NotFoundPage } from '../../src/pages/NotFoundPage'
 import * as useAuthHook from '../../src/hooks/useAuth'
 
@@ -22,9 +23,11 @@ describe('NotFoundPage - Pruebas de componente', () => {
     })
 
     render(
-      <MemoryRouter>
-        <NotFoundPage />
-      </MemoryRouter>,
+      <ThemeProvider>
+        <MemoryRouter>
+          <NotFoundPage />
+        </MemoryRouter>
+      </ThemeProvider>,
     )
 
     expect(screen.getByText('Error 404')).toBeInTheDocument()
@@ -49,9 +52,11 @@ describe('NotFoundPage - Pruebas de componente', () => {
     })
 
     render(
-      <MemoryRouter>
-        <NotFoundPage />
-      </MemoryRouter>,
+      <ThemeProvider>
+        <MemoryRouter>
+          <NotFoundPage />
+        </MemoryRouter>
+      </ThemeProvider>,
     )
 
     expect(screen.getByRole('link', { name: /Ir a mis tareas/i })).toBeInTheDocument()

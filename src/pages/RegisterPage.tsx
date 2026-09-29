@@ -90,9 +90,9 @@ export function RegisterPage() {
       description="Regístrate gratis con tu email o Google"
       error={error}
       footer={
-        <p className="mt-6 text-center text-xs text-slate-400">
+        <p className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">
           ¿Ya tienes una cuenta?{' '}
-          <Link to="/login" className="text-violet-400 hover:text-violet-300 font-medium transition">
+          <Link to="/login" className="text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-medium transition">
             Inicia sesión aquí
           </Link>
         </p>

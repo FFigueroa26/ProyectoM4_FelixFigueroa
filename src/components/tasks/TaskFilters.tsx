@@ -26,8 +26,8 @@ export function TaskFilters({ value, onChange }: TaskFiltersProps) {
 
   return (
     <div className="relative z-30 flex items-center gap-2 mb-5 flex-wrap">
-      <ListFilter size={15} className="text-slate-400 shrink-0" />
-      <div className="flex items-center gap-1 p-1 bg-[#1c1338]/70 border border-[#3b2769] rounded-xl">
+      <ListFilter size={15} className="text-slate-500 dark:text-slate-400 shrink-0" />
+      <div className="flex items-center gap-1 p-1 bg-white/80 dark:bg-[#1c1338]/70 border border-slate-200 dark:border-[#3b2769] rounded-xl shadow-xs">
         {statusFilters.map((filter) => (
           <button
             key={filter.value}
@@ -40,7 +40,7 @@ export function TaskFilters({ value, onChange }: TaskFiltersProps) {
             className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition cursor-pointer ${
               value === filter.value
                 ? 'bg-violet-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-white hover:bg-[#2a1b52]'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-[#2a1b52]'
             }`}
           >
             {filter.label}
@@ -55,7 +55,7 @@ export function TaskFilters({ value, onChange }: TaskFiltersProps) {
             className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition cursor-pointer ${
               selectedPriority
                 ? 'bg-violet-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-white hover:bg-[#2a1b52]'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-[#2a1b52]'
             }`}
           >
             <span>{selectedPriority?.label || 'Prioridad'}</span>
@@ -63,7 +63,7 @@ export function TaskFilters({ value, onChange }: TaskFiltersProps) {
           </button>
 
           {isPriorityOpen && (
-            <div className="absolute left-0 top-full z-50 mt-1 min-w-full rounded-lg border border-[#3b2769] bg-[#1c1338] p-1 shadow-xl">
+            <div className="absolute left-0 top-full z-50 mt-1 min-w-full rounded-lg border border-slate-200 dark:border-[#3b2769] bg-white dark:bg-[#1c1338] p-1 shadow-xl">
               {priorityFilters.map((filter) => (
                 <button
                   key={filter.value}
@@ -76,7 +76,7 @@ export function TaskFilters({ value, onChange }: TaskFiltersProps) {
                   className={`block w-full rounded-md px-3 py-1.5 text-left text-xs font-medium whitespace-nowrap transition cursor-pointer ${
                     value === filter.value
                       ? 'bg-violet-600 text-white'
-                      : 'text-slate-400 hover:bg-[#2a1b52] hover:text-white'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-[#2a1b52] dark:hover:text-white'
                   }`}
                 >
                   {filter.label}
