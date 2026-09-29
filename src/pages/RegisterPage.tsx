@@ -7,6 +7,7 @@ import { AuthTextField } from '../components/auth/AuthTextField'
 import { GoogleAuthButton } from '../components/auth/GoogleAuthButton'
 import { useAuth } from '../hooks/useAuth'
 import { getAuthErrorMessage } from '../services/authService'
+import { sendEmail } from '../services/emailService'
 
 export function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -18,7 +19,22 @@ export function RegisterPage() {
   const { register, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
 
-  const handleSubmit = async (e: FormEvent) => {
+  const sendRegistrationConfirmation = async () => {
+    await sendEmail({
+      to: email.trim(),
+      subject: 'Confirmación de registro - MateCode',
+      text: [
+        '¡Bienvenido a MateCode!',
+        '',
+        'Tu cuenta se creó correctamente.',
+        'Ya puedes organizar tus tareas, definir prioridades y controlar tus fechas de vencimiento.',
+        '',
+        'Gracias por registrarte.',
+      ].join('\n'),
+    })
+  }
+
+  const handleRegister = async (e: FormEvent) => {
     e.preventDefault()
     setError(null)
 
@@ -40,7 +56,12 @@ export function RegisterPage() {
     setSubmitting(true)
     try {
       await register(email, password)
-      navigate('/')
+      try {
+        await sendRegistrationConfirmation()
+        navigate('/')
+      } catch {
+        setError('Cuenta creada, pero no pudimos enviar el correo de confirmación. Verifica la configuración de AWS SES.')
+      }
     } catch (err: unknown) {
       const firebaseError = err as { code?: string }
       setError(getAuthErrorMessage(firebaseError.code || ''))
@@ -77,7 +98,7 @@ export function RegisterPage() {
         </p>
       }
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleRegister} className="space-y-4">
         <AuthTextField
           id="email"
           label="Correo electrónico *"
