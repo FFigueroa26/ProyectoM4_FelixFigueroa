@@ -34,7 +34,7 @@ SPA para organizar tareas por usuario con autenticación, persistencia en Cloud 
 
 ## ⚙️ Requisitos previos
 
-- Node.js 20 o superior.
+- Node.js `^20.19.0` o `>=22.12.0` (requisito de Vite 8).
 - npm.
 - Proyecto de Firebase con Authentication y Firestore configurados.
 - Cuenta de AWS SES con un remitente verificado.
@@ -57,7 +57,7 @@ npm install
 
 ### 3. Configurar variables de entorno
 
-Copia `.env.example` como `.env.local` y completa los valores correspondientes. No uses credenciales reales dentro del repositorio.
+Copia `.env.example` como `.env.local` y completa los valores correspondientes. Las variables `VITE_*` las lee el frontend; las de AWS y `FIREBASE_PROJECT_ID` las lee la función serverless. No uses credenciales reales dentro del repositorio.
 
 ### 4. Iniciar el servidor
 
@@ -106,6 +106,9 @@ Estas variables se usan únicamente en la función serverless y deben configurar
 | `AWS_SECRET_ACCESS_KEY` | Clave secreta AWS |
 | `AWS_REGION` | Región de AWS, por ejemplo `us-east-1` |
 | `SES_FROM_EMAIL` | Remitente verificado en SES |
+| `FIREBASE_PROJECT_ID` | Project ID de Firebase, usado para verificar el ID token del usuario. Opcional: si no se define, se usa `VITE_FIREBASE_PROJECT_ID` como respaldo |
+
+> Ninguna de estas variables lleva el prefijo `VITE_`, por lo que nunca se incluyen en el bundle del navegador. El cliente nunca ve las credenciales de AWS ni el remitente real.
 
 > 🔒 `.env`, `.env.local` y las credenciales reales no deben subirse al repositorio. `.env.example` solo contiene nombres de variables sin datos sensibles.
 
@@ -114,17 +117,18 @@ Estas variables se usan únicamente en la función serverless y deben configurar
 ### Confirmación de registro
 
 1. El usuario completa el registro con email y contraseña.
-2. Firebase crea la cuenta.
+2. Firebase crea la cuenta e inicia sesión, por lo que el cliente ya tiene un ID token.
 3. `RegisterPage` solicita a `emailService` el envío del correo de confirmación.
-4. La función serverless `/api/send-email` valida los datos y usa AWS SES.
-5. AWS SES envía el mensaje desde `SES_FROM_EMAIL` al correo registrado.
+4. `emailService` adjunta el ID token en la cabecera `Authorization`.
+5. La función serverless verifica el token y usa el correo del propio usuario como destinatario.
+6. AWS SES envía el mensaje desde `SES_FROM_EMAIL`.
 
 ### Resumen de tareas
 
 1. El usuario pulsa **Enviar resumen de tareas**.
 2. `SendTaskSummaryButton` construye el resumen con totales, estados, prioridades y fechas.
-3. `emailService` hace una solicitud `POST` a `/api/send-email`.
-4. La función serverless valida el destinatario y los campos obligatorios.
+3. `emailService` hace una solicitud `POST` a `/api/send-email` con el ID token.
+4. La función serverless verifica el token y valida los campos obligatorios.
 5. `SESClient` se configura usando las variables de entorno del servidor.
 6. AWS SES envía el mensaje desde `SES_FROM_EMAIL` al correo del usuario.
 7. La interfaz muestra el resultado de la operación.
@@ -146,20 +150,31 @@ Las credenciales de AWS nunca se importan en React ni se exponen al navegador.
 
 ```text
 api/
-└── send-email.ts             # Función serverless para AWS SES
+├── send-email.ts             # Función serverless para AWS SES
+└── _lib/
+    └── verifyFirebaseToken.ts # Verificación del ID token (el prefijo _ evita que Vercel lo trate como endpoint)
 
 src/
-├── components/               # Componentes de autenticación y tareas
-├── features/auth/            # Contexto y proveedor de autenticación
-├── hooks/                    # useAuth y useTasks
-├── pages/                   # Login, registro y tablero
-├── routes/                  # Rutas públicas y protegidas
-├── services/                # Firebase, autenticación, tareas y email
-└── types/                   # Tipos TypeScript
+├── components/               # Componentes de autenticación, tareas y comunes
+│   ├── auth/                 # Shell, campos y botón de Google
+│   ├── common/               # ThemeToggle
+│   └── tasks/                # Formulario, listado, filtros, modal y resumen
+├── features/                 # Contextos y proveedores
+│   ├── auth/                 # Contexto y proveedor de autenticación
+│   └── theme/                # Contexto y proveedor de tema
+├── hooks/                    # useAuth, useTasks y useTheme
+├── pages/                    # Login, registro, tablero y 404
+├── routes/                   # Rutas públicas y protegidas
+├── services/                 # Firebase, autenticación, tareas y email
+├── types/                    # Tipos TypeScript
+└── utils/                    # Prioridades
 
 tests/
-├── components/              # Pruebas de componentes
-└── unit/                    # Pruebas unitarias de servicios
+├── api/                      # Pruebas de la función serverless
+├── components/               # Pruebas de componentes
+├── pages/                    # Pruebas de páginas
+├── routes/                   # Pruebas de los guards de ruta
+└── unit/                     # Pruebas unitarias de servicios
 ```
 
 ## 🧪 Testing
@@ -175,6 +190,11 @@ La suite cubre:
 - Formulario de tareas.
 - Estados de carga, error y vacío del listado.
 - Envío exitoso y fallido del resumen por email.
+- Verificación del ID token de Firebase (token ausente, inválido, con `iat` futuro).
+- `api/send-email`: método no permitido, token rechazado, destinatario derivado del token, campos faltantes, configuración de AWS ausente y error de SES.
+- Guards de ruta: redirección a `/login` sin sesión, redirección a `/` con sesión y estado de carga.
+- Aviso de email de confirmación no entregado, y su descarte.
+- Alternancia de tema claro/oscuro y renderizado del 404.
 - Operaciones principales de `taskService`.
 - Persistencia de posición y estado durante drag & drop.
 
@@ -186,6 +206,8 @@ La suite cubre:
 4. Configura las variables privadas de AWS SES.
 5. Ejecuta el despliegue.
 6. Cada push a `main` puede generar un nuevo despliegue automático.
+
+El archivo `vercel.json` define el rewrite de la SPA: sin él, recargar una ruta como `/login` devuelve 404 en producción. Su patrón excluye `/api/` para que la función serverless siga funcionando.
 
 URL pública: [https://proyecto-m4-felix-figueroa.vercel.app/](https://proyecto-m4-felix-figueroa.vercel.app/)
 
