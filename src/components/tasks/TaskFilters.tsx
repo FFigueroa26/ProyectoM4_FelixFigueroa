@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ChevronDown, ListFilter } from 'lucide-react'
+import { PRIORITY_LABELS, TASK_PRIORITIES } from '../../utils/priority'
 
 export type FilterType = 'all' | 'pending' | 'completed' | 'high' | 'medium' | 'low'
 
@@ -8,17 +9,21 @@ interface TaskFiltersProps {
   onChange: (value: FilterType) => void
 }
 
-const statusFilters: Array<{ value: FilterType; label: string }> = [
+interface FilterOption {
+  value: FilterType
+  label: string
+}
+
+const statusFilters: FilterOption[] = [
   { value: 'all', label: 'Todas' },
   { value: 'pending', label: 'Pendientes' },
   { value: 'completed', label: 'Completadas' },
 ]
 
-const priorityFilters: Array<{ value: FilterType; label: string }> = [
-  { value: 'high', label: 'Alta' },
-  { value: 'medium', label: 'Media' },
-  { value: 'low', label: 'Baja' },
-]
+const priorityFilters: FilterOption[] = TASK_PRIORITIES.map((priority) => ({
+  value: priority,
+  label: PRIORITY_LABELS[priority],
+}))
 
 export function TaskFilters({ value, onChange }: TaskFiltersProps) {
   const [isPriorityOpen, setIsPriorityOpen] = useState(false)

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Loader2, Send, CheckCircle2, AlertCircle, Mail } from 'lucide-react'
-import { useAuth } from '../../hooks/useAuth'
 import { sendEmail } from '../../services/emailService'
+import { getPriorityLabel } from '../../utils/priority'
 import type { Task } from '../../types/task'
 
 type SendStatus = 'idle' | 'sending' | 'success' | 'error'
@@ -11,13 +11,10 @@ interface SendTaskSummaryButtonProps {
 }
 
 export function SendTaskSummaryButton({ tasks }: SendTaskSummaryButtonProps) {
-  const { user } = useAuth()
   const [status, setStatus] = useState<SendStatus>('idle')
   const [message, setMessage] = useState('')
 
   const handleSend = async () => {
-    if (!user?.email) return
-
     setStatus('sending')
     setMessage('')
 
@@ -25,16 +22,16 @@ export function SendTaskSummaryButton({ tasks }: SendTaskSummaryButtonProps) {
     const completed = tasks.filter((t) => t.completed)
 
     const taskLines = tasks
-      .map((t) => `- [${t.completed ? 'x' : ' '}] ${t.title} (${t.priority || 'medium'}${t.dueDate ? `, vence ${t.dueDate}` : ''}): ${t.description}`)
+      .map((t) => `- [${t.completed ? 'x' : ' '}] ${t.title} (${getPriorityLabel(t.priority)}${t.dueDate ? `, vence ${t.dueDate}` : ''}): ${t.description}`)
       .join('\n')
 
     const text = [
-      `Resumen de tus tareas en MateCode:`,
-      ``,
+      'Resumen de tus tareas en MateCode:',
+      '',
       `Total: ${tasks.length}`,
       `Pendientes: ${pending.length}`,
       `Completadas: ${completed.length}`,
-      ``,
+      '',
       taskLines || 'Aún no tienes tareas registradas.',
     ].join('\n')
 
@@ -84,16 +81,17 @@ export function SendTaskSummaryButton({ tasks }: SendTaskSummaryButtonProps) {
           )}
         </button>
 
-        {status === 'success' && (
-          <p className="hidden sm:flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium">
-            <CheckCircle2 size={13} className="shrink-0" />
-            <span>{message}</span>
-          </p>
-        )}
-
-        {status === 'error' && (
-          <p className="hidden sm:flex items-start gap-1.5 text-[11px] text-red-400 font-medium">
-            <AlertCircle size={13} className="shrink-0 mt-0.5" />
+        {status !== 'idle' && (
+          <p
+            className={`flex items-start gap-1.5 text-[11px] font-medium ${
+              status === 'success' ? 'text-emerald-400' : 'text-red-400'
+            }`}
+          >
+            {status === 'success' ? (
+              <CheckCircle2 size={13} className="shrink-0" />
+            ) : (
+              <AlertCircle size={13} className="shrink-0 mt-0.5" />
+            )}
             <span>{message}</span>
           </p>
         )}

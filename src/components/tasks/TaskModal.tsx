@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { X, CheckCircle2, Circle, AlignLeft, Trash2, Edit3, Check, CalendarDays, Flag } from 'lucide-react'
+import { getPriorityLabel } from '../../utils/priority'
 import type { Task, TaskInput } from '../../types/task'
 
 interface TaskModalProps {
@@ -115,7 +116,7 @@ export function TaskModal({ task, onClose, onToggle, onEdit, onDelete }: TaskMod
 
             <div className="flex items-center gap-2 flex-wrap mt-3 text-xs">
               <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-300 font-medium">
-                <Flag size={13} /> Prioridad: {task.priority === 'high' ? 'Alta' : task.priority === 'low' ? 'Baja' : 'Media'}
+                <Flag size={13} /> Prioridad: {getPriorityLabel(task.priority)}
               </span>
               {task.dueDate && (
                 <span className="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400">

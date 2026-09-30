@@ -8,6 +8,7 @@ import { GoogleAuthButton } from '../components/auth/GoogleAuthButton'
 import { useAuth } from '../hooks/useAuth'
 import { getAuthErrorMessage } from '../services/authService'
 import { sendEmail } from '../services/emailService'
+import { EMAIL_NOT_SENT_WARNING } from '../types/navigation'
 
 export function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -20,17 +21,22 @@ export function RegisterPage() {
   const navigate = useNavigate()
 
   const sendRegistrationConfirmation = async () => {
-    await sendEmail({
-      subject: 'Confirmación de registro - MateCode',
-      text: [
-        '¡Bienvenido a MateCode!',
-        '',
-        'Tu cuenta se creó correctamente.',
-        'Ya puedes organizar tus tareas, definir prioridades y controlar tus fechas de vencimiento.',
-        '',
-        'Gracias por registrarte.',
-      ].join('\n'),
-    })
+    try {
+      await sendEmail({
+        subject: 'Confirmación de registro - MateCode',
+        text: [
+          '¡Bienvenido a MateCode!',
+          '',
+          'Tu cuenta se creó correctamente.',
+          'Ya puedes organizar tus tareas, definir prioridades y controlar tus fechas de vencimiento.',
+          '',
+          'Gracias por registrarte.',
+        ].join('\n'),
+      })
+      return true
+    } catch {
+      return false
+    }
   }
 
   const handleRegister = async (e: FormEvent) => {
@@ -55,12 +61,8 @@ export function RegisterPage() {
     setSubmitting(true)
     try {
       await register(email, password)
-      try {
-        await sendRegistrationConfirmation()
-        navigate('/')
-      } catch {
-        setError('Cuenta creada, pero no pudimos enviar el correo de confirmación. Verifica la configuración de AWS SES.')
-      }
+      const emailSent = await sendRegistrationConfirmation()
+      navigate('/', { state: emailSent ? undefined : { warning: EMAIL_NOT_SENT_WARNING } })
     } catch (err: unknown) {
       const firebaseError = err as { code?: string }
       setError(getAuthErrorMessage(firebaseError.code || ''))

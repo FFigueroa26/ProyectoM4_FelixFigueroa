@@ -1,6 +1,8 @@
 import { Edit3, Trash2, Check, AlignLeft, CalendarDays, Flag } from 'lucide-react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import type { ChangeEvent } from 'react'
+import { getPriorityLabel } from '../../utils/priority'
 import type { Task } from '../../types/task'
 
 interface TodoItemProps {
@@ -20,14 +22,14 @@ export function TodoItem({ task, onToggle, onEdit, onDelete, onSelect }: TodoIte
     transition,
     isDragging,
   } = useSortable({ id: task.id })
-  const priorityLabel = task.priority === 'high' ? 'Alta' : task.priority === 'low' ? 'Baja' : 'Media'
+  const priorityLabel = getPriorityLabel(task.priority)
   const priorityClass = task.priority === 'high'
     ? 'text-red-300 bg-red-500/10 border-red-500/20'
     : task.priority === 'low'
       ? 'text-emerald-300 bg-emerald-500/10 border-emerald-500/20'
       : 'text-amber-300 bg-amber-500/10 border-amber-500/20'
 
-  const handleToggle = (e: React.MouseEvent | React.ChangeEvent) => {
+  const handleToggle = (e: ChangeEvent) => {
     e.stopPropagation()
     onToggle(task.id, !task.completed)
   }

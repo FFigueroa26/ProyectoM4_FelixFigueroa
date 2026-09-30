@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { DndContext, DragOverlay, PointerSensor, closestCorners, pointerWithin, useSensor, useSensors, type CollisionDetection, type DragEndEvent, type DragStartEvent } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
-import { CheckSquare, LogOut, Plus, Clock, CheckCircle2 } from 'lucide-react'
+import { AlertTriangle, CheckSquare, LogOut, Plus, Clock, CheckCircle2, X } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useTasks } from '../hooks/useTasks'
 import { TodoForm } from '../components/tasks/TodoForm'
@@ -12,7 +13,9 @@ import { TaskModal } from '../components/tasks/TaskModal'
 import { TaskFilters, type FilterType } from '../components/tasks/TaskFilters'
 import { ThemeToggle } from '../components/common/ThemeToggle'
 import { updateTaskPlacement } from '../services/taskService'
-import type { Task, TaskInput } from '../types/task'
+import { DEFAULT_PRIORITY, TASK_PRIORITIES, getPriorityLabel } from '../utils/priority'
+import type { Task, TaskInput, TaskPriority } from '../types/task'
+import type { AppLocationState } from '../types/navigation'
 
 const priorityRank = { high: 0, medium: 1, low: 2 } as const
 
@@ -29,7 +32,7 @@ function sortTasks(tasks: Task[]) {
     if (a.dueDate && b.dueDate && a.dueDate !== b.dueDate) return a.dueDate.localeCompare(b.dueDate)
     if (a.dueDate && !b.dueDate) return -1
     if (!a.dueDate && b.dueDate) return 1
-    const priorityDifference = (priorityRank[a.priority || 'medium'] ?? 1) - (priorityRank[b.priority || 'medium'] ?? 1)
+    const priorityDifference = priorityRank[a.priority || DEFAULT_PRIORITY] - priorityRank[b.priority || DEFAULT_PRIORITY]
     if (priorityDifference !== 0) return priorityDifference
     return (b.createdAt || 0) - (a.createdAt || 0)
   })
@@ -38,14 +41,24 @@ function sortTasks(tasks: Task[]) {
 export function TasksPage() {
   const { user, logout } = useAuth()
   const { tasks, loading, error, addTask, editTask, toggleTask, removeTask } = useTasks()
+  const location = useLocation()
+  const navigate = useNavigate()
 
   const [isAdding, setIsAdding] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [currentFilter, setCurrentFilter] = useState<FilterType>('all')
   const [draggedTask, setDraggedTask] = useState<Task | null>(null)
+  const [warning, setWarning] = useState<string | null>(
+    (location.state as AppLocationState | null)?.warning ?? null,
+  )
   const editFormRef = useRef<HTMLDivElement>(null)
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
+
+  useEffect(() => {
+    if (!warning) return
+    navigate(location.pathname, { replace: true, state: null })
+  }, [warning, location.pathname, navigate])
 
   const filteredTasks = currentFilter === 'pending'
     ? tasks.filter((task) => !task.completed)
@@ -53,12 +66,14 @@ export function TasksPage() {
       ? tasks.filter((task) => task.completed)
       : currentFilter === 'all'
         ? tasks
-        : tasks.filter((task) => (task.priority || 'medium') === currentFilter)
-  const pendingTasks = sortTasks(filteredTasks.filter((t) => !t.completed))
-  const completedTasks = sortTasks(filteredTasks.filter((t) => t.completed))
+        : tasks.filter((task) => (task.priority || DEFAULT_PRIORITY) === currentFilter)
+  const allPendingTasks = sortTasks(tasks.filter((t) => !t.completed))
+  const allCompletedTasks = sortTasks(tasks.filter((t) => t.completed))
+  const visiblePendingTasks = filteredTasks.filter((t) => !t.completed)
+  const visibleCompletedTasks = filteredTasks.filter((t) => t.completed)
   const showPending = currentFilter !== 'completed'
   const showCompleted = currentFilter !== 'pending'
-  const showsBothStatuses = currentFilter === 'all' || ['high', 'medium', 'low'].includes(currentFilter)
+  const showsBothStatuses = currentFilter === 'all' || TASK_PRIORITIES.includes(currentFilter as TaskPriority)
 
   useEffect(() => {
     if (editingTask) {
@@ -108,8 +123,8 @@ export function TasksPage() {
 
     const overTask = tasks.find((task) => task.id === String(over.id))
     const targetCompleted = overTask ? overTask.completed : over.id === 'completed'
-    const sourceTasks = activeTask.completed ? completedTasks : pendingTasks
-    const targetTasks = targetCompleted ? completedTasks : pendingTasks
+    const sourceTasks = activeTask.completed ? allCompletedTasks : allPendingTasks
+    const targetTasks = targetCompleted ? allCompletedTasks : allPendingTasks
     const sourceIndex = sourceTasks.findIndex((task) => task.id === activeId)
     if (sourceIndex === -1) {
       setDraggedTask(null)
@@ -187,10 +202,28 @@ export function TasksPage() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-6">
+        {warning && (
+          <div
+            role="status"
+            className="mb-4 flex items-start gap-3 rounded-xl border border-amber-300 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-950/30 px-4 py-3 text-sm text-amber-800 dark:text-amber-200"
+          >
+            <AlertTriangle size={16} className="mt-0.5 shrink-0" />
+            <p className="flex-1">{warning}</p>
+            <button
+              type="button"
+              onClick={() => setWarning(null)}
+              aria-label="Descartar aviso"
+              className="shrink-0 cursor-pointer rounded p-0.5 transition hover:bg-amber-200/60 dark:hover:bg-amber-900/50"
+            >
+              <X size={15} />
+            </button>
+          </div>
+        )}
+
         <div className="mb-6">
           <TaskProgressSummary
-            completedTasks={completedTasks.length}
-            pendingTasks={pendingTasks.length}
+            completedTasks={allCompletedTasks.length}
+            pendingTasks={allPendingTasks.length}
             emailAction={<SendTaskSummaryButton tasks={tasks} />}
           />
         </div>
@@ -233,7 +266,7 @@ export function TasksPage() {
                 <h3 className="font-semibold text-sm text-slate-900 dark:text-white">Pendientes</h3>
               </div>
               <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-100 dark:bg-[#2e1d57] text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-500/20">
-                {pendingTasks.length}
+                {visiblePendingTasks.length}
               </span>
             </div>
 
@@ -256,7 +289,7 @@ export function TasksPage() {
             )}
 
             <TodoList
-              tasks={pendingTasks}
+              tasks={visiblePendingTasks}
               loading={loading}
               error={error}
               onToggle={handleToggleTask}
@@ -275,12 +308,12 @@ export function TasksPage() {
                 <h3 className="font-semibold text-sm text-slate-900 dark:text-white">Completadas</h3>
               </div>
               <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30">
-                {completedTasks.length}
+                {visibleCompletedTasks.length}
               </span>
             </div>
 
             <TodoList
-              tasks={completedTasks}
+              tasks={visibleCompletedTasks}
               loading={loading}
               error={error}
               onToggle={handleToggleTask}
@@ -298,7 +331,7 @@ export function TasksPage() {
                 <p className="text-[15px] font-semibold text-white">{draggedTask.title}</p>
                 <div className="mt-2 flex items-center gap-2 text-xs text-slate-300">
                   <span className="rounded-md bg-violet-500/20 px-2 py-1">
-                    {draggedTask.priority === 'high' ? 'Alta' : draggedTask.priority === 'low' ? 'Baja' : 'Media'}
+                    {getPriorityLabel(draggedTask.priority)}
                   </span>
                   {draggedTask.dueDate && <span>{draggedTask.dueDate}</span>}
                 </div>

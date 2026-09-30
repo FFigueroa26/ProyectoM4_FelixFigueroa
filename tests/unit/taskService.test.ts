@@ -29,7 +29,7 @@ describe('taskService - Pruebas unitarias con mocks de Firestore', () => {
 
     vi.mocked(firestore.addDoc).mockResolvedValueOnce(mockDocRef as never)
 
-    const newId = await createTask(mockInput, userId)
+    const newId = await createTask(mockInput, userId, 0)
 
     expect(newId).toBe('tarea-abc-1')
     expect(firestore.addDoc).toHaveBeenCalledTimes(1)
@@ -40,6 +40,7 @@ describe('taskService - Pruebas unitarias con mocks de Firestore', () => {
         description: 'Practicar mocks',
         completed: false,
         userId: 'user-123',
+        order: 0,
       }),
     )
   })
@@ -65,7 +66,7 @@ describe('taskService - Pruebas unitarias con mocks de Firestore', () => {
     const mockInput = { title: 'Tarea con error', description: 'Falla simulada' }
     vi.mocked(firestore.addDoc).mockRejectedValueOnce(new Error('Fallo de conexión en Firestore'))
 
-    await expect(createTask(mockInput, 'user-123')).rejects.toThrow('Fallo de conexión en Firestore')
+    await expect(createTask(mockInput, 'user-123', 0)).rejects.toThrow('Fallo de conexión en Firestore')
   })
 
   it('deleteTask: debe llamar a deleteDoc con la referencia de la tarea', async () => {

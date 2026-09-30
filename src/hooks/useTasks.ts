@@ -22,6 +22,7 @@ export function useTasks() {
       user.uid,
       (updatedTasks) => {
         setTasks(updatedTasks)
+        setError(null)
         setLoading(false)
       },
       () => {
@@ -35,7 +36,10 @@ export function useTasks() {
 
   const addTask = async (input: TaskInput) => {
     if (!user) throw new Error('Usuario no autenticado')
-    await createTask(input, user.uid)
+    const lastOrder = tasks
+      .filter((task) => !task.completed)
+      .reduce((max, task) => Math.max(max, task.order ?? -1), -1)
+    await createTask(input, user.uid, lastOrder + 1)
   }
 
   const editTask = async (taskId: string, input: TaskInput) => {

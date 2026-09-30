@@ -9,7 +9,6 @@ export function NotFoundPage() {
 
   return (
     <main className="relative min-h-screen flex items-center justify-center p-4">
-      {/* Brand Header */}
       <header className="absolute top-8 left-8 flex items-center gap-3">
         <Link to="/" className="flex items-center gap-3 group focus:outline-none">
           <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-violet-600 text-white shadow-md shadow-violet-600/20 group-hover:bg-violet-500 transition">
@@ -18,21 +17,14 @@ export function NotFoundPage() {
           <span className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">MateCode</span>
         </Link>
       </header>
-
-      {/* Theme Toggle Top Right */}
       <div className="absolute top-8 right-8">
         <ThemeToggle />
       </div>
-
-      {/* Main 404 Card */}
       <section className="w-full max-w-lg -translate-y-2 sm:-translate-y-4">
         <div className="bg-white/90 dark:bg-[#221e35] border border-slate-200 dark:border-[#393456] rounded-2xl p-8 sm:p-10 shadow-2xl backdrop-blur-sm text-center">
-          {/* Badge Icon */}
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-violet-500/10 border border-violet-500/20 text-violet-600 dark:text-violet-400 mb-6 shadow-inner">
             <HelpCircle className="w-10 h-10 animate-pulse" />
           </div>
-
-          {/* 404 Large Label */}
           <p className="text-sm font-semibold tracking-widest uppercase text-violet-600 dark:text-violet-400 mb-2">
             Error 404
           </p>
@@ -42,8 +34,6 @@ export function NotFoundPage() {
           <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto leading-relaxed">
             La página que estás buscando no existe, ha sido movida o la dirección ingresada no es correcta.
           </p>
-
-          {/* Actions */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
               type="button"

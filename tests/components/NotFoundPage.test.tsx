@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import '@testing-library/jest-dom/vitest'
 import { MemoryRouter } from 'react-router-dom'
 import { ThemeProvider } from '../../src/features/theme/ThemeProvider'
 import { NotFoundPage } from '../../src/pages/NotFoundPage'

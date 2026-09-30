@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { PlusCircle, Edit3, X, AlertCircle, CalendarDays, Flag } from 'lucide-react'
-import type { TaskInput } from '../../types/task'
+import { DEFAULT_PRIORITY, PRIORITY_LABELS, TASK_PRIORITIES } from '../../utils/priority'
+import type { TaskInput, TaskPriority } from '../../types/task'
 
 interface TodoFormProps {
   onSubmit: (input: TaskInput) => Promise<void>
@@ -18,7 +19,7 @@ export function TodoForm({
   const [title, setTitle] = useState(initialData?.title || '')
   const [description, setDescription] = useState(initialData?.description || '')
   const [dueDate, setDueDate] = useState(initialData?.dueDate || '')
-  const [priority, setPriority] = useState(initialData?.priority || 'medium')
+  const [priority, setPriority] = useState<TaskPriority>(initialData?.priority || DEFAULT_PRIORITY)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -37,7 +38,7 @@ export function TodoForm({
         setTitle('')
         setDescription('')
         setDueDate('')
-        setPriority('medium')
+        setPriority(DEFAULT_PRIORITY)
       }
     } catch {
       setError('Hubo un error al guardar la tarea.')
@@ -103,12 +104,12 @@ export function TodoForm({
             <select
               id="task-priority"
               value={priority}
-              onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high')}
+              onChange={(e) => setPriority(e.target.value as TaskPriority)}
               className="w-full px-3 py-2 bg-slate-50 dark:bg-[#1b182b] border border-slate-200 dark:border-[#393456] rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:border-violet-500 dark:focus:border-violet-400 focus:ring-1 focus:ring-violet-500/20 dark:focus:ring-violet-400/30 transition"
             >
-              <option value="high">Alta</option>
-              <option value="medium">Media</option>
-              <option value="low">Baja</option>
+              {TASK_PRIORITIES.map((option) => (
+                <option key={option} value={option}>{PRIORITY_LABELS[option]}</option>
+              ))}
             </select>
           </div>
         </div>

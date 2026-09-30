@@ -3,14 +3,9 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { SendTaskSummaryButton } from '../../src/components/tasks/SendTaskSummaryButton'
 import * as emailService from '../../src/services/emailService'
-import * as authHook from '../../src/hooks/useAuth'
 
 vi.mock('../../src/services/emailService', () => ({
   sendEmail: vi.fn(),
-}))
-
-vi.mock('../../src/hooks/useAuth', () => ({
-  useAuth: vi.fn(),
 }))
 
 describe('SendTaskSummaryButton - Pruebas con servicio simulado', () => {
@@ -21,14 +16,6 @@ describe('SendTaskSummaryButton - Pruebas con servicio simulado', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(authHook.useAuth).mockReturnValue({
-      user: { email: 'felix@test.com' } as never,
-      loading: false,
-      login: vi.fn(),
-      loginWithGoogle: vi.fn(),
-      register: vi.fn(),
-      logout: vi.fn(),
-    })
   })
 
   it('debe enviar el correo y mostrar mensaje de éxito al completar el envío', async () => {
