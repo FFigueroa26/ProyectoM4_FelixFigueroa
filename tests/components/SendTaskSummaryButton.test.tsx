@@ -44,7 +44,6 @@ describe('SendTaskSummaryButton - Pruebas con servicio simulado', () => {
     expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(emailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
-        to: 'felix@test.com',
         subject: 'Tu resumen de tareas - MateCode',
       }),
     )

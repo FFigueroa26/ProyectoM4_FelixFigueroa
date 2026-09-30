@@ -40,7 +40,6 @@ export function SendTaskSummaryButton({ tasks }: SendTaskSummaryButtonProps) {
 
     try {
       await sendEmail({
-        to: user.email,
         subject: 'Tu resumen de tareas - MateCode',
         text,
       })

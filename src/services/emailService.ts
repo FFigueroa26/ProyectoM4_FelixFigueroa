@@ -1,15 +1,27 @@
+import { auth } from './firebase'
+
 const SEND_EMAIL_ENDPOINT = '/api/send-email'
 
-export interface SendEmailInput {
-  to: string
+interface SendEmailInput {
   subject: string
   text: string
 }
 
 export async function sendEmail(input: SendEmailInput): Promise<void> {
+  const user = auth.currentUser
+
+  if (!user) {
+    throw new Error('Debes iniciar sesión para enviar correos.')
+  }
+
+  const idToken = await user.getIdToken()
+
   const response = await fetch(SEND_EMAIL_ENDPOINT, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${idToken}`,
+    },
     body: JSON.stringify(input),
   })
 

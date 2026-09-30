@@ -21,7 +21,6 @@ export function RegisterPage() {
 
   const sendRegistrationConfirmation = async () => {
     await sendEmail({
-      to: email.trim(),
       subject: 'Confirmación de registro - MateCode',
       text: [
         '¡Bienvenido a MateCode!',
