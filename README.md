@@ -57,7 +57,7 @@ npm install
 
 ### 3. Configurar variables de entorno
 
-Copia `.env.example` como `.env.local` y completa los valores correspondientes. Las variables `VITE_*` las lee el frontend; las de AWS y `FIREBASE_PROJECT_ID` las lee la función serverless. No uses credenciales reales dentro del repositorio.
+Copia `.env.example` como `.env.local` y completa los valores correspondientes. Las variables `VITE_*` las lee el frontend y también la función serverless; las de AWS solo las lee la función serverless. No uses credenciales reales dentro del repositorio.
 
 ### 4. Iniciar el servidor
 
@@ -91,7 +91,7 @@ Estas variables usan el prefijo `VITE_` porque son leídas por la aplicación we
 | --- | --- |
 | `VITE_FIREBASE_API_KEY` | API de Firebase |
 | `VITE_FIREBASE_AUTH_DOMAIN` | Dominio de autenticación |
-| `VITE_FIREBASE_PROJECT_ID` | Proyecto de Firebase |
+| `VITE_FIREBASE_PROJECT_ID` | Proyecto de Firebase. La función serverless lo usa para verificar el ID token |
 | `VITE_FIREBASE_STORAGE_BUCKET` | Almacenamiento de Firebase |
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Identificador del remitente |
 | `VITE_FIREBASE_APP_ID` | Identificador de la aplicación |
@@ -106,9 +106,8 @@ Estas variables se usan únicamente en la función serverless y deben configurar
 | `AWS_SECRET_ACCESS_KEY` | Clave secreta AWS |
 | `AWS_REGION` | Región de AWS, por ejemplo `us-east-1` |
 | `SES_FROM_EMAIL` | Remitente verificado en SES |
-| `FIREBASE_PROJECT_ID` | Project ID de Firebase, usado para verificar el ID token del usuario. Opcional: si no se define, se usa `VITE_FIREBASE_PROJECT_ID` como respaldo |
 
-> Ninguna de estas variables lleva el prefijo `VITE_`, por lo que nunca se incluyen en el bundle del navegador. El cliente nunca ve las credenciales de AWS ni el remitente real.
+> La función serverless también necesita `VITE_FIREBASE_PROJECT_ID`, ya configurado en el paso anterior.
 
 > 🔒 `.env`, `.env.local` y las credenciales reales no deben subirse al repositorio. `.env.example` solo contiene nombres de variables sin datos sensibles.
 

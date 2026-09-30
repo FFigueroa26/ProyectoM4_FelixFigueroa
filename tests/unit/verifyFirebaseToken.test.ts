@@ -18,11 +18,11 @@ function makeRequest(authorization?: string): Request {
 describe('verifyFirebaseIdToken', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    process.env.FIREBASE_PROJECT_ID = 'matecode-test'
+    process.env.VITE_FIREBASE_PROJECT_ID = 'matecode-test'
   })
 
   afterEach(() => {
-    delete process.env.FIREBASE_PROJECT_ID
+    delete process.env.VITE_FIREBASE_PROJECT_ID
   })
 
   it('rechaza la petición si no viene cabecera Authorization', async () => {

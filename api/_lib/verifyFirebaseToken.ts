@@ -21,7 +21,7 @@ function getJwks(): JWTVerifyGetKey {
 }
 
 function getProjectId(): string {
-  const projectId = process.env.FIREBASE_PROJECT_ID ?? process.env.VITE_FIREBASE_PROJECT_ID
+  const projectId = process.env.VITE_FIREBASE_PROJECT_ID
 
   if (!projectId) {
     throw new Error('MISSING_PROJECT_ID')
