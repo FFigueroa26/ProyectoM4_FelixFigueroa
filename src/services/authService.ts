@@ -15,6 +15,7 @@ export function getAuthErrorMessage(code: string): string {
     case 'auth/user-disabled':
       return 'Esta cuenta ha sido deshabilitada.'
     case 'auth/user-not-found':
+      return 'No existe una cuenta con este correo.'
     case 'auth/wrong-password':
     case 'auth/invalid-credential':
       return 'Correo o contraseña incorrectos.'
@@ -22,6 +23,8 @@ export function getAuthErrorMessage(code: string): string {
       return 'Este correo ya está registrado.'
     case 'auth/weak-password':
       return 'La contraseña debe tener al menos 6 caracteres.'
+    case 'auth/too-many-requests':
+      return 'Demasiados intentos. Intenta más tarde.'
     case 'auth/popup-closed-by-user':
       return 'Inicio de sesión con Google cancelado.'
     case 'auth/missing-email':
