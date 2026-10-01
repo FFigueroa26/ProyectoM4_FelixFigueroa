@@ -60,15 +60,16 @@ export function TasksPage() {
     navigate(location.pathname, { replace: true, state: null })
   }, [warning, location.pathname, navigate])
 
+  const sortedTasks = sortTasks(tasks)
   const filteredTasks = currentFilter === 'pending'
-    ? tasks.filter((task) => !task.completed)
+    ? sortedTasks.filter((task) => !task.completed)
     : currentFilter === 'completed'
-      ? tasks.filter((task) => task.completed)
+      ? sortedTasks.filter((task) => task.completed)
       : currentFilter === 'all'
-        ? tasks
-        : tasks.filter((task) => (task.priority || DEFAULT_PRIORITY) === currentFilter)
-  const allPendingTasks = sortTasks(tasks.filter((t) => !t.completed))
-  const allCompletedTasks = sortTasks(tasks.filter((t) => t.completed))
+        ? sortedTasks
+        : sortedTasks.filter((task) => (task.priority || DEFAULT_PRIORITY) === currentFilter)
+  const allPendingTasks = sortedTasks.filter((t) => !t.completed)
+  const allCompletedTasks = sortedTasks.filter((t) => t.completed)
   const visiblePendingTasks = filteredTasks.filter((t) => !t.completed)
   const visibleCompletedTasks = filteredTasks.filter((t) => t.completed)
   const showPending = currentFilter !== 'completed'
@@ -166,9 +167,9 @@ export function TasksPage() {
     <div className="min-h-screen text-slate-800 dark:text-slate-100 pb-16">
       <header className="sticky top-0 z-30 bg-white/80 dark:bg-[#140d26]/70 border-b border-slate-200/80 dark:border-[#362459] backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-violet-600 flex items-center justify-center shadow-md shadow-violet-600/30">
-              <CheckSquare className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-600/30">
+              <CheckSquare className="w-6 h-6 text-white" />
             </div>
             <span className="font-bold text-slate-900 dark:text-white text-xl tracking-tight flex items-center gap-2">
               MateCode
